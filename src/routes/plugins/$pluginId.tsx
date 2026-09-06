@@ -8,6 +8,7 @@ import { GraphRule as FigureRule, Graph, GraphBody } from "@/components/graph-fr
 import { GraphRule } from "@/components/graph-frame/graph-rule";
 import { GraphPlot } from "@/components/graph-plot";
 import { GraphStat } from "@/components/graph-stat";
+import { CopyButton, Snippet } from "@/components/snippet";
 import { Badge } from "@/components/ui/badge";
 import { Empty, EmptyTitle } from "@/components/ui/empty";
 import { fmt, fmtDate, fmtMonthDay } from "@/lib/format";
@@ -71,6 +72,18 @@ function statusVariant(status: string | null): "success" | "warning" | "secondar
 	return "secondary";
 }
 
+const EMBED_STATS = ["hearts", "views", "copies"] as const;
+
+function badgeSnippet(stat: (typeof EMBED_STATS)[number], pluginId: string) {
+	const badge = `https://stats.ussego.com/api/badges/${stat}/${pluginId}.svg`;
+	return `[![${stat}](${badge})](https://stats.ussego.com/plugins/${pluginId})`;
+}
+
+function winnerSnippet(pluginId: string) {
+	const badge = `https://stats.ussego.com/api/badges/winner/${pluginId}.svg`;
+	return `[![winner](${badge})](https://stats.ussego.com/plugins/${pluginId})`;
+}
+
 function PluginDetailPage() {
 	const { pluginId } = Route.useParams();
 	const { data } = useSuspenseQuery(pluginDetailQuery(pluginId));
@@ -101,6 +114,10 @@ function PluginDetailPage() {
 	// Manual-setup plugins aren't installed through the catalog, so the feed
 	// never records copies for them — don't draw an all-zero Copies plot.
 	const manualSetup = plugin.status === "Manual setup";
+	const embedSnippets = [
+		...EMBED_STATS.map((stat) => ({ label: stat, text: badgeSnippet(stat, plugin.id) })),
+		...(data.placements.length > 0 ? [{ label: "winner", text: winnerSnippet(plugin.id) }] : []),
+	];
 
 	// Stable across renders: the chart's entrance replays whenever the data
 	// array identity changes, and this map would otherwise make a fresh array
@@ -124,6 +141,32 @@ function PluginDetailPage() {
 					<div className="flex gap-3 font-mono text-xs uppercase"><a href={data.placements[0].announcementUrl} target="_blank" rel="noreferrer" className="text-graph-accent hover:underline">announcement ↗</a><Link to="/competitions" className="text-muted-foreground hover:text-foreground hover:underline">hall of fame</Link></div>
 				</GraphBody>
 			</Graph>}
+			<Graph title="Embed" className="w-full">
+				<GraphBody className="flex flex-col gap-5">
+					<div className="flex flex-wrap items-center justify-between gap-3">
+						<p className="text-muted-foreground">Copy live SVG badges into your README.</p>
+						<a
+							href="https://github.com/ussego/omachi"
+							target="_blank"
+							rel="noreferrer"
+							className="font-mono text-graph-accent text-xs uppercase hover:underline"
+						>
+							★ Star if you embed ↗
+						</a>
+					</div>
+					<div className="flex flex-col gap-3">
+						{embedSnippets.map(({ label, text }) => (
+							<div key={label} className="flex min-w-0 items-start gap-2">
+								<div className="min-w-0 flex-1">
+									<p className="mb-1 font-mono text-graph-muted text-xs uppercase">{label}</p>
+									<Snippet>{text}</Snippet>
+								</div>
+								<CopyButton text={text} label="Copy snippet" />
+							</div>
+						))}
+					</div>
+				</GraphBody>
+			</Graph>
 			<div className="flex flex-wrap items-stretch gap-4">
 				<Graph title="Details" className="min-w-0 flex-1">
 					<GraphBody className="flex flex-col gap-5">

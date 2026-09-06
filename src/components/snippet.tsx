@@ -8,7 +8,7 @@ import { GraphCorners } from "@/components/graph-frame/graph-frame";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 /** Icon button that copies `text` and flashes a check for 1.5s. */
-export function CopyButton({ text }: { text: string }) {
+export function CopyButton({ text, label = "Copy URL" }: { text: string; label?: string }) {
 	const [copied, setCopied] = useState(false);
 	useEffect(() => {
 		if (!copied) return;
@@ -19,7 +19,7 @@ export function CopyButton({ text }: { text: string }) {
 		<Button
 			variant="ghost"
 			size="icon-sm"
-			title={copied ? "Copied" : "Copy URL"}
+			title={copied ? "Copied" : label}
 			onClick={() => {
 				navigator.clipboard.writeText(text);
 				setCopied(true);

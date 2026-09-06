@@ -18,31 +18,52 @@ export const Route = createFileRoute("/badges")({
 	component: BadgesPage,
 });
 
+const pluginMarkdown = (stat: string, id: string) =>
+	`[![${stat}](https://stats.ussego.com/api/badges/${stat}/${id}.svg)](https://stats.ussego.com/plugins/${id})`;
+
+const rankingMarkdown = (stat: string, id: string) =>
+	`[![${stat} rank](https://stats.ussego.com/api/badges/ranking/${stat}/${id}.svg)](https://stats.ussego.com/plugins/${id})`;
+
+const authorMarkdown = (stat: string, id: string) =>
+	`![${stat}](https://stats.ussego.com/api/badges/${stat}/${id}.svg)`;
+
 // Live examples served directly by Omachi.
-const EXAMPLES: { path: string; src: string }[] = [
+const EXAMPLES: { path: string; src: string; markdown: string }[] = [
 	{
 		path: "/api/badges/hearts/ussego.otoru.svg",
 		src: "https://stats.ussego.com/api/badges/hearts/ussego.otoru.svg",
+		markdown: pluginMarkdown("hearts", "ussego.otoru"),
 	},
 	{
 		path: "/api/badges/views/ussego.otoru.svg",
 		src: "https://stats.ussego.com/api/badges/views/ussego.otoru.svg",
+		markdown: pluginMarkdown("views", "ussego.otoru"),
 	},
 	{
 		path: "/api/badges/copies/ussego.otoru.svg",
 		src: "https://stats.ussego.com/api/badges/copies/ussego.otoru.svg",
+		markdown: pluginMarkdown("copies", "ussego.otoru"),
 	},
 	{
 		path: "/api/badges/views/ussego.svg (author total)",
 		src: "https://stats.ussego.com/api/badges/views/ussego.svg",
+		markdown: authorMarkdown("views", "ussego"),
 	},
 	{
 		path: "/api/badges/ranking/hearts/ussego.otoru.svg",
 		src: "https://stats.ussego.com/api/badges/ranking/hearts/ussego.otoru.svg",
+		markdown: rankingMarkdown("hearts", "ussego.otoru"),
 	},
 	{
 		path: "/api/badges/ranking/avg/ussego.otoru.svg",
 		src: "https://stats.ussego.com/api/badges/ranking/avg/ussego.otoru.svg",
+		markdown: rankingMarkdown("avg", "ussego.otoru"),
+	},
+	{
+		path: "/api/badges/winner/akshar.radio-atlas.svg",
+		src: "https://stats.ussego.com/api/badges/winner/akshar.radio-atlas.svg",
+		markdown:
+			"[![winner](https://stats.ussego.com/api/badges/winner/akshar.radio-atlas.svg)](https://stats.ussego.com/plugins/akshar.radio-atlas)",
 	},
 ];
 
@@ -77,7 +98,7 @@ function BadgesPage() {
 					<TableHeader>
 						<TableRow>
 							<TableHead>Badge</TableHead>
-							<TableHead>Endpoint</TableHead>
+							<TableHead>README snippet</TableHead>
 							<TableHead className="text-right">Copy</TableHead>
 						</TableRow>
 					</TableHeader>
@@ -87,9 +108,11 @@ function BadgesPage() {
 								<TableCell>
 									<img src={e.src} alt={e.path} className="h-6 w-auto" loading="lazy" />
 								</TableCell>
-								<TableCell className="font-mono text-muted-foreground text-xs">{e.path}</TableCell>
+								<TableCell>
+									<code className="font-mono text-muted-foreground text-xs">{e.markdown}</code>
+								</TableCell>
 								<TableCell className="text-right">
-									<CopyButton text={e.src} />
+									<CopyButton text={e.markdown} label="Copy snippet" />
 								</TableCell>
 							</TableRow>
 						))}
