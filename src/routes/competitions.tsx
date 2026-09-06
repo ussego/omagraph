@@ -75,8 +75,9 @@ function CompetitionPlacements({ placements }: { placements: Placement[] }) {
 								params={{ pluginId: placement.pluginId }}
 								className={cn(
 									"graph-frame relative flex min-h-36 flex-col justify-between gap-8 p-4 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground",
-									placement.place === 1 && "min-h-52",
-									placement.place === 2 && "min-h-44",
+									placement.place === 1 && "min-h-52 sm:order-2",
+									placement.place === 2 && "min-h-44 sm:order-1",
+									placement.place === 3 && "sm:order-3",
 									placeHoverTone(placement.place),
 								)}
 							>
