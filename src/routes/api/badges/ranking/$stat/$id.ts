@@ -10,18 +10,19 @@ import { badgeRank, isRankStat } from "@/lib/badges";
 export const Route = createFileRoute("/api/badges/ranking/$stat/$id")({
 	server: {
 		handlers: {
-			GET: async ({ params }) => {
+			GET: async ({ params, request }) => {
 				const { stat } = params;
 				if (!isRankStat(stat))
 					return Response.json({ error: "stat must be views, copies, hearts, or avg" }, { status: 400 });
 				const { id, format } = parseBadgeTarget(params.id);
 				const rank = await badgeRank(drizzle(env.DB), stat, id);
 				if (!rank) return Response.json({ error: "not found" }, { status: 404 });
+				const q = new URL(request.url).searchParams;
 				return badgeResponse(format, {
 					schemaVersion: 1,
 					label: `${stat === "avg" ? "Avg" : cap(stat)} rank`,
 					message: String(rank.rank),
-					color: BADGE_COLORS[stat],
+					color: q.get("color") ?? BADGE_COLORS[stat],
 				} satisfies BadgeResponse);
 			},
 		},

@@ -84,8 +84,8 @@ function BadgesPage() {
 			</div>
 
 			<p className="max-w-2xl text-muted-foreground">
-				Embeddable SVG badges for plugin and author stats, served directly from Omagraph's mirrored catalog data.
-				Public API reference:{" "}
+				Embeddable SVG badges for plugin and author stats, served directly from Omagraph's mirrored catalog
+				data. Public API reference:{" "}
 				<a href="/api-docs" className="underline decoration-dotted underline-offset-4">
 					/api-docs
 				</a>
@@ -160,7 +160,9 @@ function BadgesPage() {
 							<Code>color</Code>
 						</span>
 						<span className="text-muted-foreground">
-							Legacy JSON color for bots. SVG badges always use Omagraph's blue accent.
+							Value-half accent: a shields color name or <Code>#hex</Code>. Defaults to red for{" "}
+							<Code>hearts</Code>, blue for <Code>views</Code>, green for <Code>copies</Code>, purple for{" "}
+							<Code>avg</Code>, and yellow for <Code>winner</Code>. Also feeds the legacy JSON for bots.
 						</span>
 					</div>
 				</div>
