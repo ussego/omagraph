@@ -1,15 +1,14 @@
 /** @jsxImportSource react */
 
-import { Dialog } from "@base-ui/react/dialog";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ErrorPage } from "@/components/error-page";
-import { GraphCorners, GraphRule as FigureRule, Graph, GraphBody } from "@/components/graph-frame/graph-frame";
+import { GraphRule as FigureRule, Graph, GraphBody } from "@/components/graph-frame/graph-frame";
 import { GraphRule } from "@/components/graph-frame/graph-rule";
 import { GraphPlot } from "@/components/graph-plot";
 import { GraphStat } from "@/components/graph-stat";
-import { CopyButton, Snippet } from "@/components/snippet";
+import { EMBED_STATS, EmbedDialog } from "@/components/embed-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Empty, EmptyTitle } from "@/components/ui/empty";
 import { fmt, fmtDate, fmtMonthDay } from "@/lib/format";
@@ -75,8 +74,6 @@ function statusVariant(status: string | null): "success" | "warning" | "secondar
 	return "secondary";
 }
 
-const EMBED_STATS = ["hearts", "views", "copies"] as const;
-
 function badgeSnippet(stat: (typeof EMBED_STATS)[number], pluginId: string) {
 	const badge = `https://stats.ussego.com/api/badges/${stat}/${pluginId}.svg`;
 	return `[![${stat}](${badge})](https://stats.ussego.com/plugins/${pluginId})`;
@@ -85,88 +82,6 @@ function badgeSnippet(stat: (typeof EMBED_STATS)[number], pluginId: string) {
 function winnerSnippet(pluginId: string) {
 	const badge = `https://stats.ussego.com/api/badges/winner/${pluginId}.svg`;
 	return `[![winner](${badge})](https://stats.ussego.com/plugins/${pluginId})`;
-}
-
-function EmbedDialog({
-	pluginId,
-	snippets,
-}: {
-	pluginId: string;
-	snippets: ReadonlyArray<{ label: string; text: string }>;
-}) {
-	return (
-		<Dialog.Root>
-			<Dialog.Trigger className="group graph-frame w-full px-2.5 py-2 text-left transition-colors hover:bg-graph-accent/5 focus-visible:bg-graph-accent/5">
-				<span className="block font-mono text-[10px] tracking-wide text-graph-muted uppercase">
-					share your stats
-				</span>
-				<span className="mt-0.5 block font-mono text-graph-accent text-xs tracking-wide uppercase transition-colors group-hover:text-foreground">
-					add to README
-				</span>
-			</Dialog.Trigger>
-			<Dialog.Portal>
-				<Dialog.Backdrop className="fixed inset-0 z-50 bg-black/32 backdrop-blur-sm transition-opacity duration-200 data-ending-style:opacity-0 data-starting-style:opacity-0" />
-				<Dialog.Viewport className="fixed inset-0 z-50 flex min-w-0 items-center justify-center overflow-hidden p-4 sm:p-8">
-					<Dialog.Popup className="graph-frame relative flex max-h-[calc(100dvh-2rem)] min-w-0 w-full max-w-3xl flex-col overflow-hidden bg-background text-foreground outline-none transition-[scale,opacity] duration-200 data-ending-style:scale-98 data-ending-style:opacity-0 data-starting-style:scale-98 data-starting-style:opacity-0 sm:max-h-[calc(100dvh-4rem)]">
-						<GraphCorners />
-						<div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto p-5 sm:p-8">
-						<div className="flex items-start justify-between gap-4">
-							<div>
-								<Dialog.Title className="font-mono text-foreground text-sm uppercase">
-									[ embed badges ]
-								</Dialog.Title>
-								<Dialog.Description className="mt-1 text-muted-foreground text-sm">
-									Copy live SVG badges into your README.
-								</Dialog.Description>
-							</div>
-							<Dialog.Close className="font-mono text-muted-foreground text-xs uppercase transition-colors hover:text-foreground">
-								close
-							</Dialog.Close>
-						</div>
-						<div className="graph-frame relative mt-4 flex flex-wrap items-center gap-2 bg-muted/20 p-3">
-							<GraphCorners />
-							<span className="mr-1 font-mono text-graph-muted text-xs uppercase">preview</span>
-							{snippets.map(({ label }) => (
-								<img
-									key={label}
-									src={`https://stats.ussego.com/api/badges/${label}/${pluginId}.svg`}
-									alt={`${label} badge example`}
-									className="h-5 max-w-full"
-									loading="lazy"
-								/>
-							))}
-						</div>
-						<div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-							{snippets.map(({ label, text }) => (
-								<div key={label} className="min-w-0">
-									<div className="mb-1 flex items-center justify-between gap-2">
-										<p className="font-mono text-graph-muted text-xs uppercase">{label}</p>
-										<CopyButton
-											text={text}
-											label="Copy snippet"
-											showLabel
-											size="xs"
-											className="h-5 px-1.5 text-[10px] text-graph-muted hover:bg-transparent hover:text-graph-accent"
-										/>
-									</div>
-									<Snippet>{text}</Snippet>
-								</div>
-							))}
-						</div>
-						<a
-							href="https://github.com/ussego/omagraph"
-							target="_blank"
-							rel="noreferrer"
-							className="mt-5 inline-block font-mono text-graph-accent text-xs uppercase hover:underline"
-						>
-							★ star if you embed ↗
-						</a>
-						</div>
-					</Dialog.Popup>
-				</Dialog.Viewport>
-			</Dialog.Portal>
-		</Dialog.Root>
-	);
 }
 
 function PluginDetailPage() {
@@ -371,7 +286,12 @@ function PluginDetailPage() {
 									github{typeof plugin.stars === "number" ? ` · ${fmt(plugin.stars)} ★` : ""}
 								</a>
 							)}
-							<EmbedDialog pluginId={plugin.id} snippets={embedSnippets} />
+							<EmbedDialog
+								id={plugin.id}
+								snippets={embedSnippets}
+								disabled={snapshots.length === 0}
+								disabledReason="No snapshots yet — badges appear after the next poll"
+							/>
 						</div>
 					</GraphBody>
 				</Graph>

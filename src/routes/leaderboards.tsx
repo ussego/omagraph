@@ -6,7 +6,6 @@ import { useMemo } from "react";
 import { z } from "zod";
 import { GraphRank } from "@/components/graph-rank";
 import { GraphSpark } from "@/components/graph-spark";
-import { PluginAvatar } from "@/components/plugin-avatar";
 import { TrendingTable } from "@/components/trending-table";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -245,9 +244,8 @@ function AuthorsLeaderboard() {
 								<Link
 									to="/authors/$authorId"
 									params={{ authorId: r.author ?? "" }}
-									className="flex items-center gap-3 hover:underline"
+									className="hover:underline"
 								>
-									<PluginAvatar name={r.author ?? ""} className="size-5 shrink-0" />
 									{r.author}
 								</Link>
 							</TableCell>

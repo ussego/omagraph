@@ -5,6 +5,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { ErrorPage } from "@/components/error-page";
 import { Graph, GraphBody, GraphRule as FigureRule } from "@/components/graph-frame/graph-frame";
+import { EMBED_STATS, EmbedDialog } from "@/components/embed-dialog";
 import { GraphRule } from "@/components/graph-frame/graph-rule";
 import { GraphPlot } from "@/components/graph-plot";
 import { GraphStat } from "@/components/graph-stat";
@@ -82,7 +83,12 @@ function AuthorDetailPage() {
 	const statusParts = [...statusCounts.entries()]
 		.sort((a, b) => b[1] - a[1])
 		.map(([status, n]) => `${n} ${status.toLowerCase()}`);
-
+	function authorBadgeSnippet(stat: string, author: string) {
+		const badge = `https://stats.ussego.com/api/badges/${stat}/${author}.svg`;
+		return `![${stat}](${badge})`;
+	}
+	const embedStats = allManualSetup ? EMBED_STATS.filter((stat) => stat !== "copies") : EMBED_STATS;
+	const embedSnippets = embedStats.map((stat) => ({ label: stat, text: authorBadgeSnippet(stat, author) }));
 	// Stable across renders: the chart entrance replays whenever the data
 	// array identity changes, so keep the mapped series memoized.
 	const activity = useMemo(
@@ -149,6 +155,13 @@ function AuthorDetailPage() {
 							<p className="text-3xl tracking-tight tabular-nums sm:text-4xl">#{rankOf(author) ?? "—"}</p>
 							<p className="text-graph-muted">current rank (hearts)</p>
 						</div>
+						<FigureRule />
+						<EmbedDialog
+							id={author}
+							snippets={embedSnippets}
+							disabled={data.activity.length === 0}
+							disabledReason="No activity yet — badges appear after the next poll"
+						/>
 					</GraphBody>
 				</Graph>
 			</div>
