@@ -144,6 +144,43 @@
 	/* biome-ignore lint/complexity/noImportantStyles: Base UI pins the track via inline style. */
 	bottom: -8px !important;
 }
+/* Blueprint scrollbars for tables: the table container scrolls natively
+   (no ScrollArea), so theme the native scrollbar with the same frame-ink
+   thumb / accent-hover as codeblocks. Square, per the zero-radius rule. */
+[data-slot="table-container"] {
+	scrollbar-width: thin;
+	scrollbar-color: var(--graph-frame) transparent;
+}
+[data-slot="table-container"]:hover {
+	scrollbar-color: var(--graph-accent) transparent;
+}
+[data-slot="table-container"]::-webkit-scrollbar {
+	height: 8px;
+}
+[data-slot="table-container"]::-webkit-scrollbar-track {
+	background-color: transparent;
+}
+[data-slot="table-container"]::-webkit-scrollbar-thumb {
+	background-color: var(--graph-frame);
+}
+[data-slot="table-container"]::-webkit-scrollbar-thumb:hover {
+	background-color: var(--graph-accent);
+}
+/* Blueprint page scrollbar: frame-ink thumb, accent on hover — same
+   tokens as codeblocks and tables, so it tracks every theme. Width
+   stays at the platform default; only the colors are themed. */
+html {
+	scrollbar-color: var(--graph-frame) transparent;
+}
+html::-webkit-scrollbar-track {
+	background-color: transparent;
+}
+html::-webkit-scrollbar-thumb {
+	background-color: var(--graph-frame);
+}
+html::-webkit-scrollbar-thumb:hover {
+	background-color: var(--graph-accent);
+}
 
 .dark {
 	--background: oklch(0.141 0.005 285.823);

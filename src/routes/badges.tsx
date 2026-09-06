@@ -99,19 +99,19 @@ function BadgesPage() {
 						<TableRow>
 							<TableHead>Badge</TableHead>
 							<TableHead>README snippet</TableHead>
-							<TableHead className="text-right">Copy</TableHead>
+							<TableHead className="sticky right-0 bg-background text-right">Copy</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
 						{EXAMPLES.map((e) => (
 							<TableRow key={e.path}>
 								<TableCell>
-									<img src={e.src} alt={e.path} className="h-6 w-auto" loading="lazy" />
+									<img src={e.src} alt={e.path} className="h-6 w-auto max-w-none" loading="lazy" />
 								</TableCell>
 								<TableCell>
 									<code className="font-mono text-muted-foreground text-xs">{e.markdown}</code>
 								</TableCell>
-								<TableCell className="text-right">
+								<TableCell className="sticky right-0 bg-background text-right">
 									<CopyButton text={e.markdown} label="Copy snippet" />
 								</TableCell>
 							</TableRow>
