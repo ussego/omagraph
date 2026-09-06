@@ -7,6 +7,7 @@ import type {
 	BreakdownResponse,
 	BrokenResponse,
 	CategoriesResponse,
+	CompetitionsResponse,
 	ChartSeriesResponse,
 	HealthResponse,
 	HeatmapResponse,
@@ -99,6 +100,10 @@ export function pluginDetailQuery(pluginId: string) {
 		queryKey: ["plugins", pluginId],
 		queryFn: () => get<PluginDetailResponse>(`/api/plugins/${encodeURIComponent(pluginId)}`),
 	});
+}
+
+export function competitionsQuery() {
+	return queryOptions({ queryKey: ["competitions"], queryFn: () => get<CompetitionsResponse>("/api/competitions") });
 }
 
 export function leaderboardQuery(metric: string, limit = 25, sparkPoints = 10) {

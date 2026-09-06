@@ -15,11 +15,13 @@ import { Route as ApiDocsRouteImport } from './routes/api-docs'
 import { Route as BadgesRouteImport } from './routes/badges'
 import { Route as CategoriesRouteImport } from './routes/categories'
 import { Route as ChartsRouteImport } from './routes/charts'
+import { Route as CompetitionsRouteImport } from './routes/competitions'
 import { Route as HealthRouteImport } from './routes/health'
 import { Route as LeaderboardsRouteImport } from './routes/leaderboards'
 import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ApiCompetitionsRouteImport } from './routes/api/competitions'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as ApiPluginsRouteImport } from './routes/api/plugins'
 import { Route as ApiSearchRouteImport } from './routes/api/search'
@@ -42,6 +44,7 @@ import { Route as ApiStatsPublishedRouteImport } from './routes/api/stats/publis
 import { Route as ApiStatsUpdatedRouteImport } from './routes/api/stats/updated'
 import { Route as ApiStatsVerifiedRouteImport } from './routes/api/stats/verified'
 import { Route as ApiBadgesStatIdRouteImport } from './routes/api/badges/$stat/$id'
+import { Route as ApiBadgesWinnerIdRouteImport } from './routes/api/badges/winner/$id'
 import { Route as ApiChartsOmastatsKindRouteImport } from './routes/api/charts/omastats/$kind'
 import { Route as ApiBadgesRankingStatIdRouteImport } from './routes/api/badges/ranking/$stat/$id'
 import { Route as ApiChartsAuthorLoginMetricRouteImport } from './routes/api/charts/author/$login/$metric'
@@ -77,6 +80,11 @@ const ChartsRoute = ChartsRouteImport.update({
   path: '/charts',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CompetitionsRoute = CompetitionsRouteImport.update({
+  id: '/competitions',
+  path: '/competitions',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HealthRoute = HealthRouteImport.update({
   id: '/health',
   path: '/health',
@@ -100,6 +108,11 @@ const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCompetitionsRoute = ApiCompetitionsRouteImport.update({
+  id: '/api/competitions',
+  path: '/api/competitions',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiHealthRoute = ApiHealthRouteImport.update({
@@ -212,6 +225,11 @@ const ApiBadgesStatIdRoute = ApiBadgesStatIdRouteImport.update({
   path: '/api/badges/$stat/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiBadgesWinnerIdRoute = ApiBadgesWinnerIdRouteImport.update({
+  id: '/api/badges/winner/$id',
+  path: '/api/badges/winner/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiChartsOmastatsKindRoute = ApiChartsOmastatsKindRouteImport.update({
   id: '/api/charts/omastats/$kind',
   path: '/api/charts/omastats/$kind',
@@ -241,11 +259,13 @@ export interface FileRoutesByFullPath {
   '/badges': typeof BadgesRoute
   '/categories': typeof CategoriesRoute
   '/charts': typeof ChartsRoute
+  '/competitions': typeof CompetitionsRoute
   '/health': typeof HealthRoute
   '/leaderboards': typeof LeaderboardsRoute
   '/llms.txt': typeof LlmsDottxtRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/competitions': typeof ApiCompetitionsRoute
   '/api/health': typeof ApiHealthRouteWithChildren
   '/api/plugins': typeof ApiPluginsRouteWithChildren
   '/api/search': typeof ApiSearchRoute
@@ -268,6 +288,7 @@ export interface FileRoutesByFullPath {
   '/api/stats/updated': typeof ApiStatsUpdatedRoute
   '/api/stats/verified': typeof ApiStatsVerifiedRoute
   '/api/badges/$stat/$id': typeof ApiBadgesStatIdRoute
+  '/api/badges/winner/$id': typeof ApiBadgesWinnerIdRoute
   '/api/charts/omastats/$kind': typeof ApiChartsOmastatsKindRoute
   '/api/badges/ranking/$stat/$id': typeof ApiBadgesRankingStatIdRoute
   '/api/charts/author/$login/$metric': typeof ApiChartsAuthorLoginMetricRoute
@@ -280,11 +301,13 @@ export interface FileRoutesByTo {
   '/badges': typeof BadgesRoute
   '/categories': typeof CategoriesRoute
   '/charts': typeof ChartsRoute
+  '/competitions': typeof CompetitionsRoute
   '/health': typeof HealthRoute
   '/leaderboards': typeof LeaderboardsRoute
   '/llms.txt': typeof LlmsDottxtRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/competitions': typeof ApiCompetitionsRoute
   '/api/health': typeof ApiHealthRouteWithChildren
   '/api/plugins': typeof ApiPluginsRouteWithChildren
   '/api/search': typeof ApiSearchRoute
@@ -307,6 +330,7 @@ export interface FileRoutesByTo {
   '/api/stats/updated': typeof ApiStatsUpdatedRoute
   '/api/stats/verified': typeof ApiStatsVerifiedRoute
   '/api/badges/$stat/$id': typeof ApiBadgesStatIdRoute
+  '/api/badges/winner/$id': typeof ApiBadgesWinnerIdRoute
   '/api/charts/omastats/$kind': typeof ApiChartsOmastatsKindRoute
   '/api/badges/ranking/$stat/$id': typeof ApiBadgesRankingStatIdRoute
   '/api/charts/author/$login/$metric': typeof ApiChartsAuthorLoginMetricRoute
@@ -320,11 +344,13 @@ export interface FileRoutesById {
   '/badges': typeof BadgesRoute
   '/categories': typeof CategoriesRoute
   '/charts': typeof ChartsRoute
+  '/competitions': typeof CompetitionsRoute
   '/health': typeof HealthRoute
   '/leaderboards': typeof LeaderboardsRoute
   '/llms.txt': typeof LlmsDottxtRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/competitions': typeof ApiCompetitionsRoute
   '/api/health': typeof ApiHealthRouteWithChildren
   '/api/plugins': typeof ApiPluginsRouteWithChildren
   '/api/search': typeof ApiSearchRoute
@@ -347,6 +373,7 @@ export interface FileRoutesById {
   '/api/stats/updated': typeof ApiStatsUpdatedRoute
   '/api/stats/verified': typeof ApiStatsVerifiedRoute
   '/api/badges/$stat/$id': typeof ApiBadgesStatIdRoute
+  '/api/badges/winner/$id': typeof ApiBadgesWinnerIdRoute
   '/api/charts/omastats/$kind': typeof ApiChartsOmastatsKindRoute
   '/api/badges/ranking/$stat/$id': typeof ApiBadgesRankingStatIdRoute
   '/api/charts/author/$login/$metric': typeof ApiChartsAuthorLoginMetricRoute
@@ -361,11 +388,13 @@ export interface FileRouteTypes {
     | '/badges'
     | '/categories'
     | '/charts'
+    | '/competitions'
     | '/health'
     | '/leaderboards'
     | '/llms.txt'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/api/competitions'
     | '/api/health'
     | '/api/plugins'
     | '/api/search'
@@ -388,6 +417,7 @@ export interface FileRouteTypes {
     | '/api/stats/updated'
     | '/api/stats/verified'
     | '/api/badges/$stat/$id'
+    | '/api/badges/winner/$id'
     | '/api/charts/omastats/$kind'
     | '/api/badges/ranking/$stat/$id'
     | '/api/charts/author/$login/$metric'
@@ -400,11 +430,13 @@ export interface FileRouteTypes {
     | '/badges'
     | '/categories'
     | '/charts'
+    | '/competitions'
     | '/health'
     | '/leaderboards'
     | '/llms.txt'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/api/competitions'
     | '/api/health'
     | '/api/plugins'
     | '/api/search'
@@ -427,6 +459,7 @@ export interface FileRouteTypes {
     | '/api/stats/updated'
     | '/api/stats/verified'
     | '/api/badges/$stat/$id'
+    | '/api/badges/winner/$id'
     | '/api/charts/omastats/$kind'
     | '/api/badges/ranking/$stat/$id'
     | '/api/charts/author/$login/$metric'
@@ -439,11 +472,13 @@ export interface FileRouteTypes {
     | '/badges'
     | '/categories'
     | '/charts'
+    | '/competitions'
     | '/health'
     | '/leaderboards'
     | '/llms.txt'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/api/competitions'
     | '/api/health'
     | '/api/plugins'
     | '/api/search'
@@ -466,6 +501,7 @@ export interface FileRouteTypes {
     | '/api/stats/updated'
     | '/api/stats/verified'
     | '/api/badges/$stat/$id'
+    | '/api/badges/winner/$id'
     | '/api/charts/omastats/$kind'
     | '/api/badges/ranking/$stat/$id'
     | '/api/charts/author/$login/$metric'
@@ -479,11 +515,13 @@ export interface RootRouteChildren {
   BadgesRoute: typeof BadgesRoute
   CategoriesRoute: typeof CategoriesRoute
   ChartsRoute: typeof ChartsRoute
+  CompetitionsRoute: typeof CompetitionsRoute
   HealthRoute: typeof HealthRoute
   LeaderboardsRoute: typeof LeaderboardsRoute
   LlmsDottxtRoute: typeof LlmsDottxtRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ApiCompetitionsRoute: typeof ApiCompetitionsRoute
   ApiHealthRoute: typeof ApiHealthRouteWithChildren
   ApiPluginsRoute: typeof ApiPluginsRouteWithChildren
   ApiSearchRoute: typeof ApiSearchRoute
@@ -503,6 +541,7 @@ export interface RootRouteChildren {
   ApiStatsUpdatedRoute: typeof ApiStatsUpdatedRoute
   ApiStatsVerifiedRoute: typeof ApiStatsVerifiedRoute
   ApiBadgesStatIdRoute: typeof ApiBadgesStatIdRoute
+  ApiBadgesWinnerIdRoute: typeof ApiBadgesWinnerIdRoute
   ApiChartsOmastatsKindRoute: typeof ApiChartsOmastatsKindRoute
   ApiBadgesRankingStatIdRoute: typeof ApiBadgesRankingStatIdRoute
   ApiChartsAuthorLoginMetricRoute: typeof ApiChartsAuthorLoginMetricRoute
@@ -553,6 +592,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChartsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/competitions': {
+      id: '/competitions'
+      path: '/competitions'
+      fullPath: '/competitions'
+      preLoaderRoute: typeof CompetitionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/health': {
       id: '/health'
       path: '/health'
@@ -586,6 +632,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/competitions': {
+      id: '/api/competitions'
+      path: '/api/competitions'
+      fullPath: '/api/competitions'
+      preLoaderRoute: typeof ApiCompetitionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/health': {
@@ -742,6 +795,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiBadgesStatIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/badges/winner/$id': {
+      id: '/api/badges/winner/$id'
+      path: '/api/badges/winner/$id'
+      fullPath: '/api/badges/winner/$id'
+      preLoaderRoute: typeof ApiBadgesWinnerIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/charts/omastats/$kind': {
       id: '/api/charts/omastats/$kind'
       path: '/api/charts/omastats/$kind'
@@ -806,11 +866,13 @@ const rootRouteChildren: RootRouteChildren = {
   BadgesRoute: BadgesRoute,
   CategoriesRoute: CategoriesRoute,
   ChartsRoute: ChartsRoute,
+  CompetitionsRoute: CompetitionsRoute,
   HealthRoute: HealthRoute,
   LeaderboardsRoute: LeaderboardsRoute,
   LlmsDottxtRoute: LlmsDottxtRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ApiCompetitionsRoute: ApiCompetitionsRoute,
   ApiHealthRoute: ApiHealthRouteWithChildren,
   ApiPluginsRoute: ApiPluginsRouteWithChildren,
   ApiSearchRoute: ApiSearchRoute,
@@ -830,6 +892,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiStatsUpdatedRoute: ApiStatsUpdatedRoute,
   ApiStatsVerifiedRoute: ApiStatsVerifiedRoute,
   ApiBadgesStatIdRoute: ApiBadgesStatIdRoute,
+  ApiBadgesWinnerIdRoute: ApiBadgesWinnerIdRoute,
   ApiChartsOmastatsKindRoute: ApiChartsOmastatsKindRoute,
   ApiBadgesRankingStatIdRoute: ApiBadgesRankingStatIdRoute,
   ApiChartsAuthorLoginMetricRoute: ApiChartsAuthorLoginMetricRoute,

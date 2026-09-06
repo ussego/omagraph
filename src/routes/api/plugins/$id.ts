@@ -5,6 +5,7 @@ import { eq, inArray } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
 
 import { pluginRelations, pluginSnapshots, plugins } from "@/db/schema";
+import { placementsByPlugin } from "@/lib/competitions";
 import { withoutCurrent } from "@/lib/api-helpers";
 import type { PluginDetailResponse, RelatedPlugin } from "@/lib/api-types";
 import type { DrizzleDb } from "@/lib/db";
@@ -53,7 +54,7 @@ export const Route = createFileRoute("/api/plugins/$id")({
 				const db = drizzle(env.DB);
 				const [plugin] = await db.select().from(plugins).where(eq(plugins.id, params.id)).all();
 				if (!plugin) return Response.json({ error: "not found" }, { status: 404 });
-				const [snapshots, relations] = await Promise.all([
+				const [snapshots, relations, placements] = await Promise.all([
 					db
 						.select()
 						.from(pluginSnapshots)
@@ -61,6 +62,7 @@ export const Route = createFileRoute("/api/plugins/$id")({
 						.orderBy(pluginSnapshots.snapshotAt)
 						.all(),
 					relationsPayload(db, params.id),
+					placementsByPlugin(db, params.id),
 				]);
 				const avg = (key: "views" | "copies" | "hearts") => {
 					const values = snapshots
@@ -73,6 +75,7 @@ export const Route = createFileRoute("/api/plugins/$id")({
 					snapshots,
 					averages: { views: avg("views"), copies: avg("copies"), hearts: avg("hearts") },
 					relations,
+					placements,
 				} satisfies PluginDetailResponse);
 			},
 		},

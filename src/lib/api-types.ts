@@ -75,7 +75,10 @@ export type PluginDetailResponse = {
 		influence: number | null;
 		related: RelatedPlugin[];
 	} | null;
+	placements: { competitionId: string; place: number; prize: number | null; title: string; announcedAt: string; announcementUrl: string }[];
 };
+
+export type CompetitionsResponse = { competitions: { id: string; title: string; announcedAt: string; announcementUrl: string; placements: { pluginId: string; name: string | null; place: number; prize: number | null }[] }[] };
 
 export type StatsPoint = { bucket: string; count: number };
 export type StatsResponse = {
