@@ -129,7 +129,7 @@ export default function Header() {
 					</span>
 				</Link>
 				{/* Keep nav links whitespace-nowrap and use the drawer until the full header fits. */}
-				<nav className="hidden flex-1 items-center gap-1 whitespace-nowrap 2xl:flex">
+				<nav className="hidden min-w-0 flex-1 items-center gap-1 overflow-x-auto whitespace-nowrap no-scrollbar 2xl:flex">
 					{NAV.map((item) => (
 						<Link
 							key={item.to}
@@ -162,20 +162,6 @@ export default function Header() {
 						})}
 					>
 						<GithubIcon className="size-4" />
-					</a>
-					<a
-						href="https://github.com/sponsors/ussego"
-						target="_blank"
-						rel="noreferrer"
-						aria-label="Sponsor on GitHub"
-						title="Sponsor on GitHub"
-						className={buttonVariants({
-							variant: "ghost",
-							size: "icon-sm",
-							className: "graph-frame hidden 2xl:inline-flex",
-						})}
-					>
-						<IconHeart className="size-4" />
 					</a>
 					<MobileNav />
 				</div>
