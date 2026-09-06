@@ -95,23 +95,21 @@ function AdminPage() {
 		<div className="flex flex-col gap-8">
 			<h1 className="font-heading text-2xl">Competition admin</h1>
 
-			<div className="max-w-xl">
-				<AdminPanel title="Access">
-					<Field>
-						<FieldLabel htmlFor="admin-token">Admin token</FieldLabel>
-						<Input
-							id="admin-token"
-							type="password"
-							autoComplete="current-password"
-							value={token}
-							onChange={(event) => {
-								setToken(event.target.value);
-								window.localStorage.setItem(TOKEN_KEY, event.target.value);
-							}}
-						/>
-					</Field>
-				</AdminPanel>
-			</div>
+			<AdminPanel title="Access">
+				<Field>
+					<FieldLabel htmlFor="admin-token">Admin token</FieldLabel>
+					<Input
+						id="admin-token"
+						type="password"
+						autoComplete="current-password"
+						value={token}
+						onChange={(event) => {
+							setToken(event.target.value);
+							window.localStorage.setItem(TOKEN_KEY, event.target.value);
+						}}
+					/>
+				</Field>
+			</AdminPanel>
 
 			<div className="grid gap-8 lg:grid-cols-2">
 				<AdminPanel title="New competition">
