@@ -1,11 +1,11 @@
-# Omachi
+# Omagraph
 
-Omachi is an analytics dashboard for the Omarchy plugin catalog: plugin
+Omagraph is an analytics dashboard for the Omarchy plugin catalog: plugin
 metadata, popularity metrics, trend charts, embeddable badges, and an
 ecosystem explorer graph, served from a D1 mirror of the catalog and its
 stats feeds.
 
-**Production:** https://stats.ussego.com · **Source:** https://github.com/ussego/omachi
+**Production:** https://stats.ussego.com · **Source:** https://github.com/ussego/omagraph
 
 ## Stack
 
@@ -59,4 +59,4 @@ from [Omarchy](https://github.com/omacom/omarchy)'s built-in themes (MIT).
 
 Pushes to `main` run typecheck, lint, and tests, then deploy through
 `.github/workflows/deploy.yml`; `bun run deploy` deploys manually. The Worker
-is named `omachi`.
+is named `omagraph`.

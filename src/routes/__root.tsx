@@ -4,7 +4,6 @@ import { createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/reac
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import Footer from "@/components/footer";
 import { NotFoundState } from "@/components/error-page";
-import { GraphCorners } from "@/components/graph-frame/graph-frame";
 import Header from "@/components/header";
 import TanStackQueryDevtools from "@/integrations/tanstack-query/devtools";
 import { SITE_DESC, SITE_TITLE, SITE_URL } from "@/lib/site";
@@ -17,7 +16,7 @@ interface MyRouterContext {
 
 const THEME_CSS_HREF = JSON.stringify(themesCss);
 
-const THEME_INIT_SCRIPT = `(function(){try{var stored=window.localStorage.getItem('theme');var mode=(stored==='light'||stored==='dark'||stored==='auto')?stored:'auto';var prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;var resolved=mode==='auto'?(prefersDark?'dark':'light'):mode;var root=document.documentElement;root.classList.remove('light','dark');root.classList.add(resolved);if(mode==='auto'){root.removeAttribute('data-theme')}else{root.setAttribute('data-theme',mode)}root.style.colorScheme=resolved;var palette=window.localStorage.getItem('color-theme');if(palette&&palette!=='omachi'){root.setAttribute('data-color-theme',palette);var link=document.createElement('link');link.rel='stylesheet';link.href=${THEME_CSS_HREF};document.head.appendChild(link)}else{root.removeAttribute('data-color-theme')}}catch(e){}})();`;
+const THEME_INIT_SCRIPT = `(function(){try{var stored=window.localStorage.getItem('theme');var mode=(stored==='light'||stored==='dark'||stored==='auto')?stored:'auto';var prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;var resolved=mode==='auto'?(prefersDark?'dark':'light'):mode;var root=document.documentElement;root.classList.remove('light','dark');root.classList.add(resolved);if(mode==='auto'){root.removeAttribute('data-theme')}else{root.setAttribute('data-theme',mode)}root.style.colorScheme=resolved;var palette=window.localStorage.getItem('color-theme');if(palette&&palette!=='omagraph'&&palette!=='omachi'){root.setAttribute('data-color-theme',palette);var link=document.createElement('link');link.rel='stylesheet';link.href=${THEME_CSS_HREF};document.head.appendChild(link)}else{root.removeAttribute('data-color-theme')}}catch(e){}})();`;
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
 	head: () => ({
@@ -27,7 +26,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 			{ title: SITE_TITLE },
 			{ name: "description", content: SITE_DESC },
 			{ property: "og:type", content: "website" },
-			{ property: "og:site_name", content: "Omachi" },
+			{ property: "og:site_name", content: "Omagraph" },
 			{ property: "og:title", content: SITE_TITLE },
 			{ property: "og:description", content: SITE_DESC },
 			{ property: "og:url", content: SITE_URL },
@@ -66,9 +65,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<Header />
 				<main className="flex min-h-[calc(100dvh-3.5rem)] flex-col">
 					{/* overflow-x-clip: corner marks overhang 8px and must not scroll the
-					    page while the column is wider than max-w-6xl (640-1168px). */}
+				    page while the column is wider than max-w-6xl (640-1168px). */}
 					<div className="graph-frame-sides relative mx-auto w-full max-w-6xl flex-1 overflow-x-clip">
-						<GraphCorners ink="text-graph-frame-soft" className="hidden sm:flex" />
 						<div className="px-4 py-8 sm:px-6">{children}</div>
 					</div>
 					<Footer />

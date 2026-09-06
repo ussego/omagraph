@@ -1,11 +1,11 @@
 import "@tanstack/react-start";
 import { createFileRoute } from "@tanstack/react-router";
 
-const LLMS_TXT = `# Omachi
+const LLMS_TXT = `# Omagraph
 
 > An independent companion dashboard for the Omarchy plugin catalog: hearts, views, copies, leaderboards, ecosystem health, categories, and embeddable badges. Snapshots refresh every 8 hours; new-plugin counts every 30 minutes.
 
-## Omachi
+## Omagraph
 
 - [Overview](https://stats.ussego.com/): catalog totals and trend charts for hearts, views, copies, and new plugins.
 - [Leaderboards](https://stats.ussego.com/leaderboards): top plugins by hearts, views, copies, and conversion, plus trending and author leaderboards.

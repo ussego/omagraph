@@ -10,8 +10,8 @@ import { pageHead } from "@/lib/site";
 export const Route = createFileRoute("/charts")({
 	head: () =>
 		pageHead(
-			"Omarchy Plugin Charts · Omachi",
-			"Create embeddable charts for Omarchy plugin, author, and catalog trends using Omachi's public JSON endpoints and live marketplace data.",
+			"Omarchy Plugin Charts · Omagraph",
+			"Create embeddable charts for Omarchy plugin, author, and catalog trends using Omagraph's public JSON endpoints and live marketplace data.",
 			"/charts",
 		),
 	component: ChartsPage,
@@ -64,7 +64,7 @@ function ChartsPage() {
 			<div className="flex items-center justify-between gap-4">
 				<h1 className="font-heading text-2xl">Omarchy Plugin Charts</h1>
 				<a
-					href="https://github.com/ussego/omachi"
+					href="https://github.com/ussego/omagraph"
 					target="_blank"
 					rel="noreferrer"
 					className={buttonVariants({ variant: "outline" })}
@@ -75,7 +75,7 @@ function ChartsPage() {
 			</div>
 
 			<p className="max-w-2xl text-muted-foreground">
-				Embeddable chart images for catalog stats. Omachi serves the time series as JSON; shieldcn renders the
+				Embeddable chart images for catalog stats. Omagraph serves the time series as JSON; shieldcn renders the
 				SVG. Public JSON reference:{" "}
 				<a href="/api-docs" className="underline decoration-dotted underline-offset-4">
 					/api-docs

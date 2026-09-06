@@ -12,7 +12,7 @@ import { pageHead } from "@/lib/site";
 const TOKEN_KEY = "admin-token";
 
 export const Route = createFileRoute("/admin")({
-	head: () => pageHead("Admin · Omachi", "Competition administration.", "/admin", true),
+	head: () => pageHead("Admin · Omagraph", "Competition administration.", "/admin", true),
 	component: AdminPage,
 });
 

@@ -36,7 +36,7 @@ const leaderboardsSearchSchema = z.object({
 export const Route = createFileRoute("/leaderboards")({
 	head: () =>
 		pageHead(
-			"Omarchy Plugin Leaderboard · Omachi",
+			"Omarchy Plugin Leaderboard · Omagraph",
 			"Compare the top Omarchy plugins by hearts, views, copies, conversion, and recent growth, with rankings for plugin authors across the catalog.",
 			"/leaderboards",
 		),

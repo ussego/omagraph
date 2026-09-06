@@ -194,7 +194,7 @@ function OgCard() {
 				<div style={mono(170, ACCENT, { fontWeight: 700, lineHeight: 1 })}>[O]</div>
 				{/* trailing letter-space pulled back so the tracked run centers truly */}
 				<div style={mono(26, SITE_FOREGROUND, { letterSpacing: 14, marginRight: -14, lineHeight: 1, marginTop: 34 })}>
-					OMACHI
+					OMAGRAPH
 				</div>
 				<div style={sans(30, 500, MUTED, { lineHeight: 1, marginTop: 22 })}>
 					Independent analytics for the Omarchy plugin catalog

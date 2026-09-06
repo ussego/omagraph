@@ -15,7 +15,7 @@ import { pageHead } from "@/lib/site";
 export const Route = createFileRoute("/categories")({
 	head: () =>
 		pageHead(
-			"Omarchy Plugin Categories · Omachi",
+			"Omarchy Plugin Categories · Omagraph",
 			"Explore Omarchy plugin categories by catalog size, average hearts, views, copies, and monthly publishing activity across the plugin ecosystem.",
 			"/categories",
 		),

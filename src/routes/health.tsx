@@ -48,7 +48,7 @@ const healthSearchSchema = z.object({
 export const Route = createFileRoute("/health")({
 	head: () =>
 		pageHead(
-			"Omarchy Plugin Ecosystem Health · Omachi",
+			"Omarchy Plugin Ecosystem Health · Omagraph",
 			"Review verification status, install availability, stale repositories, failed upstream checks, and recently unverified plugins across the Omarchy catalog.",
 			"/health",
 		),

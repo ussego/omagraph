@@ -1,6 +1,6 @@
-# Omachi design language: blueprint
+# Omagraph design language: blueprint
 
-Omachi's chrome and charts share one vocabulary: technical-drawing ("blueprint") frames with dashed
+Omagraph's chrome and charts share one vocabulary: technical-drawing ("blueprint") frames with dashed
 rules, `+` corner marks, bracketed mono captions, terminal colors, and Geist Mono. Nothing is
 rounded. The active color theme supplies the terminal palette; charts and their captions use each
 hue for a fixed data role. Follow this document for any UI change; extend it when the language grows.
@@ -14,7 +14,7 @@ hue for a fixed data role. Follow this document for any UI change; extend it whe
 - **Radius**: `--radius: 0`. Never add rounding.
 - **Graph palette**: `--graph-accent` for primary/current data, `--graph-accent-2` for cyan secondary
   or historical data, `--graph-accent-3` for magenta category data, plus `--graph-positive`,
-  `--graph-warning`, and `--graph-negative` for green/yellow/red status data. Omachi defines its own
+  `--graph-warning`, and `--graph-negative` for green/yellow/red status data. Omagraph defines its own
   terminal palette; the header's color-theme picker replaces it with the chosen Omarchy palette.
 - **Frame inks**: `--graph-frame` (charts and controls), `--graph-frame-soft` (page frame, roughly
   half the contrast), `--graph-muted`, `--graph-faint`.
@@ -24,7 +24,7 @@ hue for a fixed data role. Follow this document for any UI change; extend it whe
 ## Color themes
 
 The theme control (`src/components/color-theme-picker.tsx`, header) carries the light/dark/auto
-mode row and the color-theme grid: the **Omachi** default — the tokens above, no overrides — plus
+mode row and the color-theme grid: the **Omagraph** default — the tokens above, no overrides — plus
 the Omarchy built-in themes from their `colors.toml` files. It is a client-side layer only: the
 mode writes `localStorage["theme"]` and toggles `.light`/`.dark`; picking a palette writes
 `localStorage["color-theme"]` and a `data-color-theme` attribute on `<html>`; CSS custom properties
@@ -46,7 +46,7 @@ do the rest, so charts, frames, and chrome re-theme together.
 - **Other mode** (adaptation block): the site's own neutrals keep their contrast and only the
   graph palette moves (`:root[data-color-theme="…"]` for dark themes in light mode, `….dark` for
   light themes in dark mode). The generator applies the same contrast correction against the site's
-  background. `--chart-1..5` stay neutral because Omachi's ASCII graphs use the `--graph-*` tokens.
+  background. `--chart-1..5` stay neutral because Omagraph's ASCII graphs use the `--graph-*` tokens.
 - **Generated, not hand-written**: `bun run themes:generate` reads
   `/usr/share/omarchy/themes/<theme>/colors.toml` and rewrites `src/themes/themes.css` (the token
   blocks) and `src/themes/themes.ts` (swatch metadata) — both committed, never hand-edited
@@ -96,9 +96,9 @@ do the rest, so charts, frames, and chrome re-theme together.
 - **Rules** `graph-rule` (horizontal), `graph-rule-y` (vertical), `graph-rule-soft` (page-frame
   horizontal in soft ink — navbar/footer edges and section separators).
 - **Corners** `GraphCorners` (`src/components/graph-frame/graph-frame.tsx`): `+` marks straddling
-  each corner with a `bg-background` punch-out; props `mark`, `ink` (default `text-graph-frame`),
-  `corners` (which corners get marks; default all four), `className`. Page-frame corners use
-  `ink="text-graph-frame-soft"` and are hidden below `sm`.
+  each corner with a centered 16px `bg-background` punch-out; props `mark`, `ink` (default
+  `text-graph-frame`), `corners` (which corners get marks; default all four), `className`.
+  Page-frame corners use `ink="text-graph-frame-soft"` and are hidden below `sm`.
 - **Captions** `GraphTitle`: `[ TITLE ]` straddling the top edge — mono, uppercase, and colored with
   the graph's data-role tone. Charts only.
 - **Marching ants** `graph-frame-march` (styles.css): runs the frame dashes at 0.4s linear
@@ -123,13 +123,15 @@ do the rest, so charts, frames, and chrome re-theme together.
   over the content padding). Use it sparingly: between major regions only — never directly under the
   page header, and never between sibling blocks of one region (adjacent charts, consecutive
   reference blocks). Loading skeletons mirror them so the swap to settled content never jumps.
-- **Navbar**: full-width, `bg-background/80 backdrop-blur`, soft dashed rule at the bottom edge.
-  Logo `[O]` = the Omachi mark: an accent `O` between brackets, mono, uppercase,
-  `tracking-widest`, `aria-label="Omachi — home"` carries the name. Nav links = mono uppercase
+- **Navbar**: full-width, `bg-background/80 backdrop-blur`, soft dashed rule at the bottom edge,
+  and `graph-frame-sides` on its `max-w-6xl` inner column so the sides align with the page frame.
+  Logo `[O]` = the Omagraph mark: an accent `O` between brackets, mono, uppercase,
+  `tracking-widest`, `aria-label="Omagraph — home"` carries the name. Nav links = mono uppercase
   `text-xs`; active page `text-graph-accent`, inactive `text-muted-foreground`. Header controls
   (theme, search, GitHub/Sponsor, menu) all carry the dashed `graph-frame`.
-- **Footer**: full-width soft dashed rule at the top; `[O]` brand mark in accent with the Omachi
-  name in the muted line beneath; captions mono muted `text-xs`.
+- **Footer**: full-width soft dashed rule at the top; its `max-w-6xl` inner column continues the
+  `graph-frame-sides` page frame. `[O]` brand mark in accent with the Omagraph name in the muted line
+  beneath; captions mono muted `text-xs`.
 - **Tabs** (`src/components/ui/tabs.tsx`): triggers mono uppercase `text-xs`; default variant is a
   dashed `graph-frame` list on `bg-background` with a flat `bg-muted` indicator; the underline
   variant uses a `bg-graph-accent` indicator.

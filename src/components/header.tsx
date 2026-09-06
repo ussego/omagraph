@@ -2,6 +2,7 @@ import { IconHeart, IconMenu } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
 import { ColorThemePicker } from "@/components/color-theme-picker";
 import { CommandPalette } from "@/components/command-palette";
+import { GraphCorners } from "@/components/graph-frame/graph-frame";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
 	Drawer,
@@ -45,7 +46,7 @@ function MobileNav() {
 	return (
 		<Drawer>
 			<DrawerTrigger
-				render={<Button variant="ghost" size="icon-sm" aria-label="Menu" className="graph-frame lg:hidden" />}
+				render={<Button variant="ghost" size="icon-sm" aria-label="Menu" className="graph-frame 2xl:hidden" />}
 			>
 				<IconMenu className="size-4" />
 			</DrawerTrigger>
@@ -76,7 +77,7 @@ function MobileNav() {
 				</nav>
 				<DrawerFooter>
 					<a
-						href="https://github.com/ussego/omachi"
+						href="https://github.com/ussego/omagraph"
 						target="_blank"
 						rel="noreferrer"
 						className={buttonVariants({ variant: "ghost", size: "sm", className: "w-full justify-start" })}
@@ -101,11 +102,11 @@ function MobileNav() {
 
 export default function Header() {
 	return (
-		<header className="sticky top-0 z-40 shrink-0 bg-background/80 backdrop-blur">
-			<div className="mx-auto flex h-14 w-full max-w-6xl items-center gap-4 px-4 sm:px-6">
+		<header className="sticky top-0 z-40 shrink-0 overflow-x-clip bg-background/80 backdrop-blur">
+			<div className="graph-frame-sides relative mx-auto flex h-14 w-full max-w-6xl items-center gap-4 px-4 sm:px-6">
 				<Link
 					to="/"
-					aria-label="Omachi — home"
+					aria-label="Omagraph — home"
 					className="group relative inline-block shrink-0 font-mono text-sm tracking-widest text-graph-accent uppercase"
 				>
 					<span
@@ -127,8 +128,8 @@ export default function Header() {
 						]
 					</span>
 				</Link>
-				{/* Keep nav links whitespace-nowrap and hide them below lg: Ecosystem Health only fits in the fixed-height bar at lg. */}
-				<nav className="hidden flex-1 items-center gap-1 whitespace-nowrap lg:flex">
+				{/* Keep nav links whitespace-nowrap and use the drawer until the full header fits. */}
+				<nav className="hidden flex-1 items-center gap-1 whitespace-nowrap 2xl:flex">
 					{NAV.map((item) => (
 						<Link
 							key={item.to}
@@ -145,11 +146,11 @@ export default function Header() {
 						</Link>
 					))}
 				</nav>
-					<div className="flex flex-1 items-center justify-end gap-1 lg:flex-none">
-						<ColorThemePicker />
-						<CommandPalette />
+				<div className="flex flex-1 items-center justify-end gap-1 2xl:flex-none">
+					<ColorThemePicker />
+					<CommandPalette />
 					<a
-						href="https://github.com/ussego/omachi"
+						href="https://github.com/ussego/omagraph"
 						target="_blank"
 						rel="noreferrer"
 						aria-label="GitHub repository"
@@ -157,7 +158,7 @@ export default function Header() {
 						className={buttonVariants({
 							variant: "ghost",
 							size: "icon-sm",
-							className: "graph-frame hidden lg:inline-flex",
+							className: "graph-frame hidden 2xl:inline-flex",
 						})}
 					>
 						<GithubIcon className="size-4" />
@@ -171,13 +172,14 @@ export default function Header() {
 						className={buttonVariants({
 							variant: "ghost",
 							size: "icon-sm",
-							className: "graph-frame hidden lg:inline-flex",
+							className: "graph-frame hidden 2xl:inline-flex",
 						})}
 					>
 						<IconHeart className="size-4" />
 					</a>
 					<MobileNav />
 				</div>
+				<GraphCorners corners={["bl", "br"]} ink="text-graph-frame-soft" className="hidden xl:flex" />
 			</div>
 			<div aria-hidden="true" className="graph-rule-soft absolute inset-x-0 bottom-0" />
 		</header>

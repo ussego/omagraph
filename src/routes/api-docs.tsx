@@ -10,8 +10,8 @@ import { pageHead } from "@/lib/site";
 export const Route = createFileRoute("/api-docs")({
 	head: () =>
 		pageHead(
-			"Public API Docs · Omachi",
-			"Omachi's public API: plugins, authors, leaderboards, badges, and charts for external renderers and embedders.",
+			"Public API Docs · Omagraph",
+			"Omagraph's public API: plugins, authors, leaderboards, badges, and charts for external renderers and embedders.",
 			"/api-docs",
 		),
 	component: ApiDocsPage,
@@ -26,7 +26,7 @@ function ApiDocsPage() {
 			<div className="flex items-center justify-between gap-4">
 				<h1 className="font-heading text-2xl">Public API</h1>
 				<a
-					href="https://github.com/ussego/omachi"
+					href="https://github.com/ussego/omagraph"
 					target="_blank"
 					rel="noreferrer"
 					className={buttonVariants({ variant: "outline" })}

@@ -8,10 +8,10 @@ import { cn } from "@/lib/utils";
 type Corner = "tl" | "tr" | "bl" | "br";
 
 const CORNER_POSITIONS: Record<Corner, string> = {
-	tl: "top-0 left-0 -translate-x-1/2 -translate-y-1/2",
+	tl: "top-0 left-px -translate-x-1/2 -translate-y-1/2",
 	tr: "top-0 right-0 translate-x-1/2 -translate-y-1/2",
-	bl: "bottom-0 left-0 -translate-x-1/2 translate-y-1/2",
-	br: "right-0 bottom-0 translate-x-1/2 translate-y-1/2",
+	bl: "bottom-px left-px -translate-x-1/2 translate-y-1/2",
+	br: "right-0 bottom-px translate-x-1/2 translate-y-1/2",
 };
 
 function GraphCorners({
@@ -27,7 +27,7 @@ function GraphCorners({
 	className?: string;
 }) {
 	const corner = cn(
-		"pointer-events-none absolute z-10 flex size-4 items-center justify-center bg-background font-mono text-sm leading-none select-none",
+		"pointer-events-none absolute z-10 flex size-3 items-center justify-center font-mono text-sm leading-none select-none",
 		ink,
 		className,
 	);
@@ -36,7 +36,11 @@ function GraphCorners({
 		<>
 			{corners.map((c) => (
 				<span key={c} aria-hidden="true" className={cn(corner, CORNER_POSITIONS[c])}>
-					{mark}
+					<span
+						aria-hidden="true"
+						className="absolute top-1/2 left-1/2 z-0 size-4 -translate-x-1/2 -translate-y-1/2 bg-background"
+					/>
+					<span className="relative z-10">{mark}</span>
 				</span>
 			))}
 		</>

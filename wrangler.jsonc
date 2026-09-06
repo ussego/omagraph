@@ -1,13 +1,13 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "omachi",
+  "name": "omagraph",
   "compatibility_date": "2025-09-02",
   "assets": {
     "not_found_handling": "single-page-application"
   },
   "placement": { "mode": "smart" },
   "routes": [{ "pattern": "stats.ussego.com", "custom_domain": true }],
-  "services": [{ "binding": "SELF", "service": "omachi" }],
+  "services": [{ "binding": "SELF", "service": "omagraph" }],
   "d1_databases": [
     {
       "binding": "DB",

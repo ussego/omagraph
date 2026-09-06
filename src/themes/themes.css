@@ -2,7 +2,7 @@
  * Sources: /usr/share/omarchy/themes/<theme>/colors.toml (Omarchy built-ins) and the
  * neutral ramp in src/styles.css. Regenerate after either changes.
  *
- * The Omachi default (no data-color-theme attribute) is untouched. Each
+ * The Omagraph default (no data-color-theme attribute) is untouched. Each
  * theme overrides the full token set in its native mode and swaps only
  * the contrast-corrected graph palette in
  * the opposite mode, where the site's neutrals keep their contrast.

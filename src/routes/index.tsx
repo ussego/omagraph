@@ -59,7 +59,7 @@ export const Route = createFileRoute("/")({
 				children: JSON.stringify({
 					"@context": "https://schema.org",
 					"@type": "WebSite",
-					name: "Omachi",
+					name: "Omagraph",
 					url: SITE_URL,
 				}),
 			},

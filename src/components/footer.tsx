@@ -1,5 +1,6 @@
 import { IconHeart } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
+import { GraphCorners } from "@/components/graph-frame/graph-frame";
 import { buttonVariants } from "@/components/ui/button";
 
 function GithubIcon({ className }: { className?: string }) {
@@ -21,14 +22,19 @@ function GithubIcon({ className }: { className?: string }) {
 
 export default function Footer() {
 	return (
-		<footer className="shrink-0">
-			<div aria-hidden="true" className="graph-rule-soft" />
-			<div className="mx-auto w-full max-w-6xl px-4 pt-8 pb-10 sm:px-6">
+		<footer className="shrink-0 overflow-x-clip">
+			<div className="relative">
+				<div aria-hidden="true" className="graph-rule-soft" />
+				<div className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-px w-full max-w-6xl">
+					<GraphCorners corners={["tl", "tr"]} ink="text-graph-frame-soft" className="hidden xl:flex" />
+				</div>
+			</div>
+			<div className="graph-frame-sides mx-auto w-full max-w-6xl px-4 pt-8 pb-10 sm:px-6">
 				<div className="flex w-full flex-wrap items-end justify-between gap-3">
 					<div className="flex flex-col">
 						<span className="font-mono text-sm tracking-widest text-graph-accent uppercase">[O]</span>
 						<span className="text-muted-foreground text-sm">
-							Omachi is an independent companion dashboard for the Omarchy plugin catalog
+							Omagraph is an independent companion dashboard for the Omarchy plugin catalog
 						</span>
 					</div>
 					<div className="flex flex-wrap items-end justify-end gap-x-5 gap-y-3">
@@ -51,7 +57,7 @@ export default function Footer() {
 						</nav>
 						<div className="flex items-center gap-1">
 							<a
-								href="https://github.com/ussego/omachi"
+								href="https://github.com/ussego/omagraph"
 								target="_blank"
 								rel="noreferrer"
 								aria-label="GitHub repository"

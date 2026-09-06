@@ -40,13 +40,13 @@ export function CommandPalette() {
 					setMounted(true);
 					setOpen(true);
 				}}
-				className="graph-frame w-8 justify-center px-0 font-normal sm:w-44 sm:justify-between sm:px-[calc(--spacing(2.5)-1px)] 2xl:w-56"
+				className="graph-frame w-8 justify-center px-0 font-normal 2xl:w-44 2xl:justify-between 2xl:px-[calc(--spacing(2.5)-1px)]"
 			>
-				<IconSearch data-icon="inline-start" />
-				<span className="hidden font-mono text-xs tracking-wide text-muted-foreground uppercase sm:inline">
+				<IconSearch />
+				<span className="hidden font-mono text-xs tracking-wide text-muted-foreground uppercase 2xl:inline">
 					Search
 				</span>
-				<KbdGroup className="hidden sm:flex">
+				<KbdGroup className="hidden 2xl:flex">
 					<Kbd>Ctrl</Kbd>
 					<Kbd>K</Kbd>
 				</KbdGroup>

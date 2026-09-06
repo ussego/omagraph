@@ -52,7 +52,7 @@ export function ErrorPage({
 /** Root-route state for unmatched paths (the automatic 404). */
 export function NotFoundState() {
 	useEffect(() => {
-		document.title = "404 · Omachi";
+		document.title = "404 · Omagraph";
 	}, []);
 
 	return (
@@ -71,7 +71,7 @@ export function NotFoundState() {
 export function ErrorState({ error }: ErrorComponentProps) {
 	const router = useRouter();
 	useEffect(() => {
-		document.title = "500 · Omachi";
+		document.title = "500 · Omagraph";
 	}, []);
 
 	return (

@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * Theme control: the light/dark/auto mode (formerly ThemeToggle) plus the
- * color-theme picker — the Omachi default and the Omarchy built-in palettes
+ * color-theme picker — the Omagraph default and the Omarchy built-in palettes
  * from src/themes.
  *
  * Mode lives in localStorage["theme"] and toggles .light/.dark on <html>.
@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
 
 type ThemeMode = "light" | "dark" | "auto";
 
-const OMACHI_ID = "omachi";
+const OMAGRAPH_ID = "omagraph";
 const MODE_STORAGE_KEY = "theme";
 const PALETTE_STORAGE_KEY = "color-theme";
 const MODES: { value: ThemeMode; label: string }[] = [
@@ -56,12 +56,12 @@ function applyThemeMode(mode: ThemeMode) {
 
 function getStoredPaletteId(): string {
 	const stored = window.localStorage.getItem(PALETTE_STORAGE_KEY);
-	return COLOR_THEMES.some((t) => t.id === stored) && stored !== OMACHI_ID ? (stored as string) : OMACHI_ID;
+	return COLOR_THEMES.some((t) => t.id === stored) && stored !== OMAGRAPH_ID ? (stored as string) : OMAGRAPH_ID;
 }
 
 function applyPalette(id: string) {
 	const root = document.documentElement;
-	if (id === OMACHI_ID) {
+	if (id === OMAGRAPH_ID) {
 		root.removeAttribute("data-color-theme");
 		window.localStorage.removeItem(PALETTE_STORAGE_KEY);
 	} else {
@@ -111,7 +111,7 @@ function loadThemesCss(): Promise<void> {
 export function ColorThemePicker() {
 	const [open, setOpen] = useState(false);
 	const [mode, setMode] = useState<ThemeMode>("auto");
-	const [palette, setPalette] = useState(OMACHI_ID);
+	const [palette, setPalette] = useState(OMAGRAPH_ID);
 
 	useEffect(() => {
 		const initialMode = getInitialMode();
@@ -142,7 +142,7 @@ export function ColorThemePicker() {
 		// The first pick on this device loads the themes stylesheet; the
 		// attribute flips only once it is in, so the palette never flashes
 		// in half-applied.
-		if (id !== OMACHI_ID) {
+		if (id !== OMAGRAPH_ID) {
 			await loadThemesCss();
 		}
 		applyPalette(id);

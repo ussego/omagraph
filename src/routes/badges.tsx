@@ -11,8 +11,8 @@ import { pageHead } from "@/lib/site";
 export const Route = createFileRoute("/badges")({
 	head: () =>
 		pageHead(
-			"Omarchy Plugin Badges · Omachi",
-			"Add live Omarchy plugin and author badges for hearts, views, copies, and catalog rankings using Omachi's public badge endpoints.",
+			"Omarchy Plugin Badges · Omagraph",
+			"Add live Omarchy plugin and author badges for hearts, views, copies, and catalog rankings using Omagraph's public badge endpoints.",
 			"/badges",
 		),
 	component: BadgesPage,
@@ -27,7 +27,7 @@ const rankingMarkdown = (stat: string, id: string) =>
 const authorMarkdown = (stat: string, id: string) =>
 	`![${stat}](https://stats.ussego.com/api/badges/${stat}/${id}.svg)`;
 
-// Live examples served directly by Omachi.
+// Live examples served directly by Omagraph.
 const EXAMPLES: { path: string; src: string; markdown: string }[] = [
 	{
 		path: "/api/badges/hearts/ussego.otoru.svg",
@@ -73,7 +73,7 @@ function BadgesPage() {
 			<div className="flex items-center justify-between gap-4">
 				<h1 className="font-heading text-2xl">Omarchy Plugin Badges</h1>
 				<a
-					href="https://github.com/ussego/omachi"
+					href="https://github.com/ussego/omagraph"
 					target="_blank"
 					rel="noreferrer"
 					className={buttonVariants({ variant: "outline" })}
@@ -84,7 +84,7 @@ function BadgesPage() {
 			</div>
 
 			<p className="max-w-2xl text-muted-foreground">
-				Embeddable SVG badges for plugin and author stats, served directly from Omachi's mirrored catalog data.
+				Embeddable SVG badges for plugin and author stats, served directly from Omagraph's mirrored catalog data.
 				Public API reference:{" "}
 				<a href="/api-docs" className="underline decoration-dotted underline-offset-4">
 					/api-docs
@@ -94,7 +94,7 @@ function BadgesPage() {
 
 			<div className="flex flex-col gap-4">
 				<h2 className="font-heading text-xl">Live examples</h2>
-				<Table variant="card">
+				<Table>
 					<TableHeader>
 						<TableRow>
 							<TableHead>Badge</TableHead>
@@ -160,7 +160,7 @@ function BadgesPage() {
 							<Code>color</Code>
 						</span>
 						<span className="text-muted-foreground">
-							Legacy JSON color for bots. SVG badges always use Omachi's blue accent.
+							Legacy JSON color for bots. SVG badges always use Omagraph's blue accent.
 						</span>
 					</div>
 				</div>

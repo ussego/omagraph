@@ -36,7 +36,7 @@ export const Route = createFileRoute("/authors/$authorId")({
 	head: ({ params, loaderData }) => {
 		const author = loaderData?.author ?? params.authorId;
 		return pageHead(
-			`${author} Omarchy Plugins & Stats · Omachi`,
+			`${author} Omarchy Plugins & Stats · Omagraph`,
 			`Explore ${author}'s Omarchy plugins, catalog rank, categories, hearts, views, copies, and marketplace activity over the latest 90 days.`,
 			`/authors/${encodeURIComponent(params.authorId)}`,
 		);

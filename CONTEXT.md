@@ -1,6 +1,6 @@
-# Omachi
+# Omagraph
 
-Omachi is an analytics dashboard for the Omarchy plugin catalog: engagement stats, leaderboards, ecosystem health, and embeddable badges/charts.
+Omagraph is an analytics dashboard for the Omarchy plugin catalog: engagement stats, leaderboards, ecosystem health, and embeddable badges/charts.
 
 ## Language
 
@@ -45,7 +45,7 @@ The maintainer of one or more Plugins, identified by their upstream (GitHub) log
 A ranking of Plugins or Authors by a chosen metric (views, copies, hearts, or a derived score).
 
 **Badge**:
-A single embeddable stat for one Plugin or Author (e.g. heart count), served by Omachi as a blueprint-style SVG. A legacy JSON representation exists for bot integrations.
+A single embeddable stat for one Plugin or Author (e.g. heart count), served by Omagraph as a blueprint-style SVG. A legacy JSON representation exists for bot integrations.
 
 **Chart Series**:
 A time-bucketed sequence of counts for one metric (e.g. a Plugin's hearts over time), consumed by an external chart renderer.

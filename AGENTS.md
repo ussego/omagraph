@@ -25,13 +25,13 @@ This is a single-context repo using root `CONTEXT.md` and `docs/adr/` when those
 
 ## Work here
 
-Omachi is an analytics dashboard for the Omarchy plugin catalog. It is a
+Omagraph is an analytics dashboard for the Omarchy plugin catalog. It is a
 TanStack Start application deployed as a Cloudflare Worker with D1 and
 Drizzle, a React frontend, TanStack Router and Query, shadcn UI primitives,
 and mdx-graphs data visualizations. Production deploys run from
 `.github/workflows/deploy.yml` on pushes to `main`; the GitHub repository is
-`https://github.com/ussego/omachi` and the current Git remote is
-`git@github.com:ussego/omachi.git`. The Worker is named `omachi`.
+`https://github.com/ussego/omagraph` and the current Git remote is
+`git@github.com:ussego/omagraph.git`. The Worker is named `omagraph`.
 Read `wrangler.jsonc` and `package.json` before editing or deploying: they are
 the environment truth for scripts, bindings, and deployment identity.
 
@@ -167,9 +167,9 @@ badge routes return SVG by default and legacy JSON from `.json`. Keep the chart 
 
 ## Publishing
 
-The GitHub repository is `https://github.com/ussego/omachi` and the current
-Git remote is `git@github.com:ussego/omachi.git` (renamed from `omastats`;
-GitHub redirects the old URL). The Worker deployment identity is `omachi`;
+The GitHub repository is `https://github.com/ussego/omagraph` and the current
+Git remote is `git@github.com:ussego/omagraph.git` (renamed from `omastats`;
+GitHub redirects the old URL). The Worker deployment identity is `omagraph`;
 the D1 database remains `omastats` by design, not as a leftover — see
 `docs/adr/0001-worker-renamed-d1-database-unchanged.md`.
 

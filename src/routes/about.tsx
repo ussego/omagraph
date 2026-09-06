@@ -10,8 +10,8 @@ import { pageHead } from "@/lib/site";
 export const Route = createFileRoute("/about")({
 	head: () =>
 		pageHead(
-			"About Omachi · Omarchy Plugin Analytics",
-			"Learn how Omachi tracks the Omarchy plugin catalog, where its data comes from, how often snapshots refresh, and how to interpret each metric.",
+			"About Omagraph · Omarchy Plugin Analytics",
+			"Learn how Omagraph tracks the Omarchy plugin catalog, where its data comes from, how often snapshots refresh, and how to interpret each metric.",
 			"/about",
 		),
 	component: AboutPage,
@@ -22,7 +22,7 @@ const textLink = "underline decoration-dotted underline-offset-4 transition-colo
 function AboutPage() {
 	return (
 		<div className="flex flex-col gap-8">
-			<h1 className="font-heading text-2xl">About Omachi</h1>
+			<h1 className="font-heading text-2xl">About Omagraph</h1>
 
 			<div className="flex flex-col gap-6">
 				<div className="flex flex-col gap-3">
@@ -30,7 +30,7 @@ function AboutPage() {
 						A clearer view of the Omarchy plugin ecosystem.
 					</p>
 					<p className="max-w-2xl text-pretty text-muted-foreground">
-						Omachi turns catalog activity into history, comparisons, and reusable stats. You can follow
+						Omagraph turns catalog activity into history, comparisons, and reusable stats. You can follow
 						releases and verification changes, compare marketplace activity, explore related plugins, and
 						embed charts or badges in your own project pages.
 					</p>
@@ -42,11 +42,11 @@ function AboutPage() {
 					</h2>
 					<p className="text-pretty text-muted-foreground">
 						The official Omarchy Plugin Catalog remains the home for publishing, reviewing, discovering, and
-						installing plugins. Omachi reads its public feeds, keeps a short history, and links each plugin
+						installing plugins. Omagraph reads its public feeds, keeps a short history, and links each plugin
 						page back to its official listing.
 					</p>
 					<p className="text-pretty text-muted-foreground">
-						Omachi will remain an independent analytics companion. It does not accept submissions, set
+						Omagraph will remain an independent analytics companion. It does not accept submissions, set
 						verification status, or provide an alternative installation path.
 					</p>
 					<div className="flex flex-wrap gap-2 pt-1">
@@ -60,7 +60,7 @@ function AboutPage() {
 							<IconExternalLink data-icon="inline-end" />
 						</a>
 						<a
-							href="https://github.com/ussego/omachi"
+							href="https://github.com/ussego/omagraph"
 							target="_blank"
 							rel="noreferrer"
 							className={buttonVariants({ variant: "outline" })}
@@ -74,13 +74,13 @@ function AboutPage() {
 
 			<GraphRule />
 
-			<section aria-labelledby="what-omachi-adds" className="flex flex-col gap-5">
+			<section aria-labelledby="what-omagraph-adds" className="flex flex-col gap-5">
 				<div className="flex flex-col gap-2">
-					<h2 id="what-omachi-adds" className="font-heading text-xl">
-						What Omachi adds
+					<h2 id="what-omagraph-adds" className="font-heading text-xl">
+						What Omagraph adds
 					</h2>
 					<p className="max-w-2xl text-muted-foreground">
-						The catalog shows the current ecosystem. Omachi keeps enough context to show how it changes.
+						The catalog shows the current ecosystem. Omagraph keeps enough context to show how it changes.
 					</p>
 				</div>
 				<dl className="grid gap-x-10 gap-y-6 sm:grid-cols-2">
@@ -157,7 +157,7 @@ function AboutPage() {
 							Counts
 						</dt>
 						<dd className="text-pretty text-sm text-muted-foreground">
-							Marketplace counts measure activity in the catalog, not plugin quality or an Omachi
+							Marketplace counts measure activity in the catalog, not plugin quality or an Omagraph
 							endorsement.
 						</dd>
 					</div>
@@ -167,7 +167,7 @@ function AboutPage() {
 							Verification
 						</dt>
 						<dd className="text-pretty text-sm text-muted-foreground">
-							Verification and install status come from the catalog. Omachi reports them without making
+							Verification and install status come from the catalog. Omagraph reports them without making
 							its own review decisions.
 						</dd>
 					</div>
@@ -203,11 +203,11 @@ function AboutPage() {
 						Independent and open source
 					</h2>
 					<p className="max-w-2xl text-pretty text-muted-foreground">
-						Ussego builds and operates Omachi as a community project. It is not affiliated with Omarchy,
+						Ussego builds and operates Omagraph as a community project. It is not affiliated with Omarchy,
 						Basecamp, or the catalog maintainers. You can inspect the code, report incorrect data, or
 						suggest an improvement on{" "}
 						<a
-							href="https://github.com/ussego/omachi"
+							href="https://github.com/ussego/omagraph"
 							target="_blank"
 							rel="noreferrer"
 							className={textLink}
@@ -220,7 +220,7 @@ function AboutPage() {
 
 				<div className="flex max-w-2xl flex-col gap-3 text-muted-foreground">
 					<p>
-						Omachi uses color themes generated from{" "}
+						Omagraph uses color themes generated from{" "}
 						<a
 							href="https://github.com/omacom/omarchy"
 							target="_blank"
@@ -232,9 +232,9 @@ function AboutPage() {
 						, released under the MIT license.
 					</p>
 					<p>
-						Omachi&apos;s own code is{" "}
+						Omagraph&apos;s own code is{" "}
 						<a
-							href="https://github.com/ussego/omachi/blob/main/LICENSE"
+							href="https://github.com/ussego/omagraph/blob/main/LICENSE"
 							target="_blank"
 							rel="noreferrer"
 							className={textLink}

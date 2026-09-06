@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "omachi",
+      "name": "omagraph",
       "dependencies": {
         "@base-ui/react": "^1.7.0",
         "@daypicker/react": "^10.0.1",
