@@ -46,6 +46,7 @@ import { Route as ApiStatsHeatmapRouteImport } from './routes/api/stats/heatmap'
 import { Route as ApiStatsPublishedRouteImport } from './routes/api/stats/published'
 import { Route as ApiStatsUpdatedRouteImport } from './routes/api/stats/updated'
 import { Route as ApiStatsVerifiedRouteImport } from './routes/api/stats/verified'
+import { Route as OgPluginsIdRouteImport } from './routes/og/plugins/$id'
 import { Route as ApiBadgesStatIdRouteImport } from './routes/api/badges/$stat/$id'
 import { Route as ApiBadgesWinnerIdRouteImport } from './routes/api/badges/winner/$id'
 import { Route as ApiChartsOmastatsKindRouteImport } from './routes/api/charts/omastats/$kind'
@@ -238,6 +239,11 @@ const ApiStatsVerifiedRoute = ApiStatsVerifiedRouteImport.update({
   path: '/api/stats/verified',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OgPluginsIdRoute = OgPluginsIdRouteImport.update({
+  id: '/og/plugins/$id',
+  path: '/og/plugins/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiBadgesStatIdRoute = ApiBadgesStatIdRouteImport.update({
   id: '/api/badges/$stat/$id',
   path: '/api/badges/$stat/$id',
@@ -308,6 +314,7 @@ export interface FileRoutesByFullPath {
   '/api/stats/published': typeof ApiStatsPublishedRoute
   '/api/stats/updated': typeof ApiStatsUpdatedRoute
   '/api/stats/verified': typeof ApiStatsVerifiedRoute
+  '/og/plugins/$id': typeof OgPluginsIdRoute
   '/api/badges/$stat/$id': typeof ApiBadgesStatIdRoute
   '/api/badges/winner/$id': typeof ApiBadgesWinnerIdRoute
   '/api/charts/omastats/$kind': typeof ApiChartsOmastatsKindRoute
@@ -353,6 +360,7 @@ export interface FileRoutesByTo {
   '/api/stats/published': typeof ApiStatsPublishedRoute
   '/api/stats/updated': typeof ApiStatsUpdatedRoute
   '/api/stats/verified': typeof ApiStatsVerifiedRoute
+  '/og/plugins/$id': typeof OgPluginsIdRoute
   '/api/badges/$stat/$id': typeof ApiBadgesStatIdRoute
   '/api/badges/winner/$id': typeof ApiBadgesWinnerIdRoute
   '/api/charts/omastats/$kind': typeof ApiChartsOmastatsKindRoute
@@ -399,6 +407,7 @@ export interface FileRoutesById {
   '/api/stats/published': typeof ApiStatsPublishedRoute
   '/api/stats/updated': typeof ApiStatsUpdatedRoute
   '/api/stats/verified': typeof ApiStatsVerifiedRoute
+  '/og/plugins/$id': typeof OgPluginsIdRoute
   '/api/badges/$stat/$id': typeof ApiBadgesStatIdRoute
   '/api/badges/winner/$id': typeof ApiBadgesWinnerIdRoute
   '/api/charts/omastats/$kind': typeof ApiChartsOmastatsKindRoute
@@ -446,6 +455,7 @@ export interface FileRouteTypes {
     | '/api/stats/published'
     | '/api/stats/updated'
     | '/api/stats/verified'
+    | '/og/plugins/$id'
     | '/api/badges/$stat/$id'
     | '/api/badges/winner/$id'
     | '/api/charts/omastats/$kind'
@@ -491,6 +501,7 @@ export interface FileRouteTypes {
     | '/api/stats/published'
     | '/api/stats/updated'
     | '/api/stats/verified'
+    | '/og/plugins/$id'
     | '/api/badges/$stat/$id'
     | '/api/badges/winner/$id'
     | '/api/charts/omastats/$kind'
@@ -536,6 +547,7 @@ export interface FileRouteTypes {
     | '/api/stats/published'
     | '/api/stats/updated'
     | '/api/stats/verified'
+    | '/og/plugins/$id'
     | '/api/badges/$stat/$id'
     | '/api/badges/winner/$id'
     | '/api/charts/omastats/$kind'
@@ -579,6 +591,7 @@ export interface RootRouteChildren {
   ApiStatsPublishedRoute: typeof ApiStatsPublishedRoute
   ApiStatsUpdatedRoute: typeof ApiStatsUpdatedRoute
   ApiStatsVerifiedRoute: typeof ApiStatsVerifiedRoute
+  OgPluginsIdRoute: typeof OgPluginsIdRoute
   ApiBadgesStatIdRoute: typeof ApiBadgesStatIdRoute
   ApiBadgesWinnerIdRoute: typeof ApiBadgesWinnerIdRoute
   ApiChartsOmastatsKindRoute: typeof ApiChartsOmastatsKindRoute
@@ -848,6 +861,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiStatsVerifiedRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/og/plugins/$id': {
+      id: '/og/plugins/$id'
+      path: '/og/plugins/$id'
+      fullPath: '/og/plugins/$id'
+      preLoaderRoute: typeof OgPluginsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/badges/$stat/$id': {
       id: '/api/badges/$stat/$id'
       path: '/api/badges/$stat/$id'
@@ -954,6 +974,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiStatsPublishedRoute: ApiStatsPublishedRoute,
   ApiStatsUpdatedRoute: ApiStatsUpdatedRoute,
   ApiStatsVerifiedRoute: ApiStatsVerifiedRoute,
+  OgPluginsIdRoute: OgPluginsIdRoute,
   ApiBadgesStatIdRoute: ApiBadgesStatIdRoute,
   ApiBadgesWinnerIdRoute: ApiBadgesWinnerIdRoute,
   ApiChartsOmastatsKindRoute: ApiChartsOmastatsKindRoute,

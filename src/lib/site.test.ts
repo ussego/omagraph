@@ -15,6 +15,19 @@ test("pageHead can prevent indexing", () => {
 	expect(head.meta).toContainEqual({ name: "robots", content: "noindex, nofollow" });
 });
 
+test("pageHead accepts a page-specific social image", () => {
+	const head = pageHead("Plugin", "Description", "/plugins/example", false, "/og/plugins/example.png");
+
+	expect(head.meta).toContainEqual({
+		property: "og:image",
+		content: "https://stats.ussego.com/og/plugins/example.png",
+	});
+	expect(head.meta).toContainEqual({
+		name: "twitter:image",
+		content: "https://stats.ussego.com/og/plugins/example.png",
+	});
+});
+
 describe("sitemapXml", () => {
 	test("lists plugins and only live authors once", () => {
 		const xml = sitemapXml([

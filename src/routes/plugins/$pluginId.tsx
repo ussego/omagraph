@@ -45,6 +45,8 @@ export const Route = createFileRoute("/plugins/$pluginId")({
 			`${name} Stats & History · Omachi`,
 			description,
 			`/plugins/${encodeURIComponent(params.pluginId)}`,
+			false,
+			`/og/plugins/${encodeURIComponent(params.pluginId)}.png`,
 		);
 	},
 	notFoundComponent: () => {
@@ -135,12 +137,41 @@ function PluginDetailPage() {
 
 	return (
 		<div className="flex flex-col gap-8">
-			{data.placements.length > 0 && <Graph title="Competition" className="w-full">
-				<GraphBody className="flex flex-wrap items-center justify-between gap-4">
-					<div><p className="text-2xl">🏆 {data.placements[0].place === 0 ? "Honorable mention" : `${data.placements[0].place}${data.placements[0].place === 1 ? "st" : data.placements[0].place === 2 ? "nd" : "th"}`} place</p><p className="text-graph-muted">{data.placements[0].title}{data.placements[0].prize ? ` · $${data.placements[0].prize}` : ""}</p></div>
-					<div className="flex gap-3 font-mono text-xs uppercase"><a href={data.placements[0].announcementUrl} target="_blank" rel="noreferrer" className="text-graph-accent hover:underline">announcement ↗</a><Link to="/competitions" className="text-muted-foreground hover:text-foreground hover:underline">hall of fame</Link></div>
-				</GraphBody>
-			</Graph>}
+			{data.placements.length > 0 && (
+				<Graph title="Competition" className="w-full">
+					<GraphBody className="flex flex-wrap items-center justify-between gap-4">
+						<div>
+							<p className="text-2xl">
+								🏆{" "}
+								{data.placements[0].place === 0
+									? "Honorable mention"
+									: `${data.placements[0].place}${data.placements[0].place === 1 ? "st" : data.placements[0].place === 2 ? "nd" : "th"}`}{" "}
+								place
+							</p>
+							<p className="text-graph-muted">
+								{data.placements[0].title}
+								{data.placements[0].prize ? ` · $${data.placements[0].prize}` : ""}
+							</p>
+						</div>
+						<div className="flex gap-3 font-mono text-xs uppercase">
+							<a
+								href={data.placements[0].announcementUrl}
+								target="_blank"
+								rel="noreferrer"
+								className="text-graph-accent hover:underline"
+							>
+								announcement ↗
+							</a>
+							<Link
+								to="/competitions"
+								className="text-muted-foreground hover:text-foreground hover:underline"
+							>
+								hall of fame
+							</Link>
+						</div>
+					</GraphBody>
+				</Graph>
+			)}
 			<Graph title="Embed" className="w-full">
 				<GraphBody className="flex flex-col gap-5">
 					<div className="flex flex-wrap items-center justify-between gap-3">

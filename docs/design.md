@@ -84,6 +84,8 @@ do the rest, so charts, frames, and chrome re-theme together.
   CSS variables or OKLCH. `src/lib/badge-svg.ts` therefore freezes the dark background, light text,
   and light-mode `--graph-accent` as sRGB values. This is the exception to the token-only color rule;
   update those values when their source tokens change.
+- Server-rendered OG PNGs have the same constraint: `src/routes/og/plugins/$id.tsx` freezes the
+  dark blueprint palette as sRGB values for Takumi, and must update them when the source tokens change.
 
 ## Frame grammar (the utilities)
 
