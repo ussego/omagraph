@@ -66,6 +66,26 @@ export const pluginRelations = sqliteTable("plugin_relations", {
 	refreshedAt: text("refreshed_at"),
 });
 
+export const competitions = sqliteTable("competitions", {
+	id: text("id").primaryKey(),
+	title: text("title").notNull(),
+	announcedAt: text("announced_at").notNull(),
+	announcementUrl: text("announcement_url").notNull(),
+});
+
+export const placements = sqliteTable(
+	"placements",
+	{
+		competitionId: text("competition_id")
+			.notNull()
+			.references(() => competitions.id),
+		pluginId: text("plugin_id").notNull(),
+		place: integer("place").notNull(),
+		prize: integer("prize"),
+	},
+	(t) => [index("placements_plugin_idx").on(t.pluginId)],
+);
+
 // meta: single-row counters maintained by the heavy poll, so request-time
 // endpoints never full-scan a fact table (the snapshot count alone scans the
 // whole plugin_snapshots table). key/value keeps future counters cheap.
