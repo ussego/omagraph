@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ApiDocsRouteImport } from './routes/api-docs'
 import { Route as BadgesRouteImport } from './routes/badges'
 import { Route as CategoriesRouteImport } from './routes/categories'
@@ -27,8 +28,10 @@ import { Route as ApiPluginsRouteImport } from './routes/api/plugins'
 import { Route as ApiSearchRouteImport } from './routes/api/search'
 import { Route as AuthorsAuthorIdRouteImport } from './routes/authors/$authorId'
 import { Route as PluginsPluginIdRouteImport } from './routes/plugins/$pluginId'
+import { Route as ApiAdminCompetitionsRouteImport } from './routes/api/admin/competitions'
 import { Route as ApiAdminExplorerPollRouteImport } from './routes/api/admin/explorer-poll'
 import { Route as ApiAdminLightPollRouteImport } from './routes/api/admin/light-poll'
+import { Route as ApiAdminPlacementsRouteImport } from './routes/api/admin/placements'
 import { Route as ApiAdminSnapshotRouteImport } from './routes/api/admin/snapshot'
 import { Route as ApiAuthorsAuthorIdRouteImport } from './routes/api/authors/$authorId'
 import { Route as ApiAuthorsLeaderboardRouteImport } from './routes/api/authors/leaderboard'
@@ -58,6 +61,11 @@ const IndexRoute = IndexRouteImport.update({
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiDocsRoute = ApiDocsRouteImport.update({
@@ -140,6 +148,11 @@ const PluginsPluginIdRoute = PluginsPluginIdRouteImport.update({
   path: '/plugins/$pluginId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAdminCompetitionsRoute = ApiAdminCompetitionsRouteImport.update({
+  id: '/api/admin/competitions',
+  path: '/api/admin/competitions',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAdminExplorerPollRoute = ApiAdminExplorerPollRouteImport.update({
   id: '/api/admin/explorer-poll',
   path: '/api/admin/explorer-poll',
@@ -148,6 +161,11 @@ const ApiAdminExplorerPollRoute = ApiAdminExplorerPollRouteImport.update({
 const ApiAdminLightPollRoute = ApiAdminLightPollRouteImport.update({
   id: '/api/admin/light-poll',
   path: '/api/admin/light-poll',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminPlacementsRoute = ApiAdminPlacementsRouteImport.update({
+  id: '/api/admin/placements',
+  path: '/api/admin/placements',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAdminSnapshotRoute = ApiAdminSnapshotRouteImport.update({
@@ -255,6 +273,7 @@ const ApiChartsPluginIdMetricRoute = ApiChartsPluginIdMetricRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
   '/api-docs': typeof ApiDocsRoute
   '/badges': typeof BadgesRoute
   '/categories': typeof CategoriesRoute
@@ -271,8 +290,10 @@ export interface FileRoutesByFullPath {
   '/api/search': typeof ApiSearchRoute
   '/authors/$authorId': typeof AuthorsAuthorIdRoute
   '/plugins/$pluginId': typeof PluginsPluginIdRoute
+  '/api/admin/competitions': typeof ApiAdminCompetitionsRoute
   '/api/admin/explorer-poll': typeof ApiAdminExplorerPollRoute
   '/api/admin/light-poll': typeof ApiAdminLightPollRoute
+  '/api/admin/placements': typeof ApiAdminPlacementsRoute
   '/api/admin/snapshot': typeof ApiAdminSnapshotRoute
   '/api/authors/$authorId': typeof ApiAuthorsAuthorIdRoute
   '/api/authors/leaderboard': typeof ApiAuthorsLeaderboardRoute
@@ -297,6 +318,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
   '/api-docs': typeof ApiDocsRoute
   '/badges': typeof BadgesRoute
   '/categories': typeof CategoriesRoute
@@ -313,8 +335,10 @@ export interface FileRoutesByTo {
   '/api/search': typeof ApiSearchRoute
   '/authors/$authorId': typeof AuthorsAuthorIdRoute
   '/plugins/$pluginId': typeof PluginsPluginIdRoute
+  '/api/admin/competitions': typeof ApiAdminCompetitionsRoute
   '/api/admin/explorer-poll': typeof ApiAdminExplorerPollRoute
   '/api/admin/light-poll': typeof ApiAdminLightPollRoute
+  '/api/admin/placements': typeof ApiAdminPlacementsRoute
   '/api/admin/snapshot': typeof ApiAdminSnapshotRoute
   '/api/authors/$authorId': typeof ApiAuthorsAuthorIdRoute
   '/api/authors/leaderboard': typeof ApiAuthorsLeaderboardRoute
@@ -340,6 +364,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
   '/api-docs': typeof ApiDocsRoute
   '/badges': typeof BadgesRoute
   '/categories': typeof CategoriesRoute
@@ -356,8 +381,10 @@ export interface FileRoutesById {
   '/api/search': typeof ApiSearchRoute
   '/authors/$authorId': typeof AuthorsAuthorIdRoute
   '/plugins/$pluginId': typeof PluginsPluginIdRoute
+  '/api/admin/competitions': typeof ApiAdminCompetitionsRoute
   '/api/admin/explorer-poll': typeof ApiAdminExplorerPollRoute
   '/api/admin/light-poll': typeof ApiAdminLightPollRoute
+  '/api/admin/placements': typeof ApiAdminPlacementsRoute
   '/api/admin/snapshot': typeof ApiAdminSnapshotRoute
   '/api/authors/$authorId': typeof ApiAuthorsAuthorIdRoute
   '/api/authors/leaderboard': typeof ApiAuthorsLeaderboardRoute
@@ -384,6 +411,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/admin'
     | '/api-docs'
     | '/badges'
     | '/categories'
@@ -400,8 +428,10 @@ export interface FileRouteTypes {
     | '/api/search'
     | '/authors/$authorId'
     | '/plugins/$pluginId'
+    | '/api/admin/competitions'
     | '/api/admin/explorer-poll'
     | '/api/admin/light-poll'
+    | '/api/admin/placements'
     | '/api/admin/snapshot'
     | '/api/authors/$authorId'
     | '/api/authors/leaderboard'
@@ -426,6 +456,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/admin'
     | '/api-docs'
     | '/badges'
     | '/categories'
@@ -442,8 +473,10 @@ export interface FileRouteTypes {
     | '/api/search'
     | '/authors/$authorId'
     | '/plugins/$pluginId'
+    | '/api/admin/competitions'
     | '/api/admin/explorer-poll'
     | '/api/admin/light-poll'
+    | '/api/admin/placements'
     | '/api/admin/snapshot'
     | '/api/authors/$authorId'
     | '/api/authors/leaderboard'
@@ -468,6 +501,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/admin'
     | '/api-docs'
     | '/badges'
     | '/categories'
@@ -484,8 +518,10 @@ export interface FileRouteTypes {
     | '/api/search'
     | '/authors/$authorId'
     | '/plugins/$pluginId'
+    | '/api/admin/competitions'
     | '/api/admin/explorer-poll'
     | '/api/admin/light-poll'
+    | '/api/admin/placements'
     | '/api/admin/snapshot'
     | '/api/authors/$authorId'
     | '/api/authors/leaderboard'
@@ -511,6 +547,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRoute
   ApiDocsRoute: typeof ApiDocsRoute
   BadgesRoute: typeof BadgesRoute
   CategoriesRoute: typeof CategoriesRoute
@@ -527,8 +564,10 @@ export interface RootRouteChildren {
   ApiSearchRoute: typeof ApiSearchRoute
   AuthorsAuthorIdRoute: typeof AuthorsAuthorIdRoute
   PluginsPluginIdRoute: typeof PluginsPluginIdRoute
+  ApiAdminCompetitionsRoute: typeof ApiAdminCompetitionsRoute
   ApiAdminExplorerPollRoute: typeof ApiAdminExplorerPollRoute
   ApiAdminLightPollRoute: typeof ApiAdminLightPollRoute
+  ApiAdminPlacementsRoute: typeof ApiAdminPlacementsRoute
   ApiAdminSnapshotRoute: typeof ApiAdminSnapshotRoute
   ApiAuthorsAuthorIdRoute: typeof ApiAuthorsAuthorIdRoute
   ApiAuthorsLeaderboardRoute: typeof ApiAuthorsLeaderboardRoute
@@ -562,6 +601,13 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api-docs': {
@@ -676,6 +722,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PluginsPluginIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/admin/competitions': {
+      id: '/api/admin/competitions'
+      path: '/api/admin/competitions'
+      fullPath: '/api/admin/competitions'
+      preLoaderRoute: typeof ApiAdminCompetitionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/admin/explorer-poll': {
       id: '/api/admin/explorer-poll'
       path: '/api/admin/explorer-poll'
@@ -688,6 +741,13 @@ declare module '@tanstack/react-router' {
       path: '/api/admin/light-poll'
       fullPath: '/api/admin/light-poll'
       preLoaderRoute: typeof ApiAdminLightPollRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/placements': {
+      id: '/api/admin/placements'
+      path: '/api/admin/placements'
+      fullPath: '/api/admin/placements'
+      preLoaderRoute: typeof ApiAdminPlacementsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/admin/snapshot': {
@@ -862,6 +922,7 @@ const ApiPluginsRouteWithChildren = ApiPluginsRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AdminRoute: AdminRoute,
   ApiDocsRoute: ApiDocsRoute,
   BadgesRoute: BadgesRoute,
   CategoriesRoute: CategoriesRoute,
@@ -878,8 +939,10 @@ const rootRouteChildren: RootRouteChildren = {
   ApiSearchRoute: ApiSearchRoute,
   AuthorsAuthorIdRoute: AuthorsAuthorIdRoute,
   PluginsPluginIdRoute: PluginsPluginIdRoute,
+  ApiAdminCompetitionsRoute: ApiAdminCompetitionsRoute,
   ApiAdminExplorerPollRoute: ApiAdminExplorerPollRoute,
   ApiAdminLightPollRoute: ApiAdminLightPollRoute,
+  ApiAdminPlacementsRoute: ApiAdminPlacementsRoute,
   ApiAdminSnapshotRoute: ApiAdminSnapshotRoute,
   ApiAuthorsAuthorIdRoute: ApiAuthorsAuthorIdRoute,
   ApiAuthorsLeaderboardRoute: ApiAuthorsLeaderboardRoute,

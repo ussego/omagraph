@@ -9,6 +9,12 @@ test("pageHead emits matching canonical and social URLs", () => {
 	expect(head.meta).toContainEqual({ property: "og:url", content: "https://stats.ussego.com/leaderboards" });
 });
 
+test("pageHead can prevent indexing", () => {
+	const head = pageHead("Admin", "Admin tools", "/admin", true);
+
+	expect(head.meta).toContainEqual({ name: "robots", content: "noindex, nofollow" });
+});
+
 describe("sitemapXml", () => {
 	test("lists plugins and only live authors once", () => {
 		const xml = sitemapXml([

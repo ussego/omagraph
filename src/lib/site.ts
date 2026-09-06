@@ -9,7 +9,7 @@ export const SITE_DESC =
 	"An independent companion dashboard for the Omarchy plugin catalog: hearts, views, copies, leaderboards, ecosystem health, categories, and embeddable badges.";
 export const SITE_URL = "https://stats.ussego.com";
 
-export function pageHead(title: string, description: string, path: string) {
+export function pageHead(title: string, description: string, path: string, noindex = false) {
 	const url = new URL(path, SITE_URL).href;
 	return {
 		meta: [
@@ -20,6 +20,7 @@ export function pageHead(title: string, description: string, path: string) {
 			{ property: "og:url", content: url },
 			{ name: "twitter:title", content: title },
 			{ name: "twitter:description", content: description },
+			...(noindex ? [{ name: "robots", content: "noindex, nofollow" }] : []),
 		],
 		links: [{ rel: "canonical", href: url }],
 	};
