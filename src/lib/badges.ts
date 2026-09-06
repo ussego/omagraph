@@ -1,4 +1,4 @@
-import { and, count, eq, isNotNull, type SQL, sql } from "drizzle-orm";
+import { and, isNotNull, type SQL, sql } from "drizzle-orm";
 
 import { plugins } from "@/db/schema";
 import type { DrizzleDb } from "@/lib/db";
@@ -42,18 +42,21 @@ const hasScore = (stat: RankStat): SQL | undefined =>
  * matches, so the route can 404.
  */
 export async function badgeValue(db: DrizzleDb, stat: Stat, id: string): Promise<number | null> {
-	if (id.includes(".")) {
-		const [row] = await db.select({ v: COL[stat] }).from(plugins).where(eq(plugins.id, id)).all();
-		return row?.v ?? null;
-	}
-	const [plugin] = await db.select({ v: COL[stat] }).from(plugins).where(eq(plugins.id, id)).all();
-	if (plugin) return plugin.v ?? null;
-	const [author] = await db
-		.select({ n: count(), v: authorScore(stat).as("v") })
-		.from(plugins)
-		.where(and(eq(plugins.author, id), isNotNull(plugins.currentSnapshotAt)))
-		.all();
-	return author && author.n > 0 ? author.v : null;
+	const value = COL[stat];
+	const [row] = await db.all<{
+		exact: number | null;
+		exact_value: number | null;
+		authored: number | null;
+		author_value: number;
+	}>(sql`select
+		max(case when ${plugins.id} = ${id} then 1 else 0 end) as exact,
+		max(case when ${plugins.id} = ${id} then ${value} end) as exact_value,
+		sum(case when ${plugins.author} = ${id} and ${plugins.currentSnapshotAt} is not null then 1 else 0 end) as authored,
+		coalesce(sum(case when ${plugins.author} = ${id} and ${plugins.currentSnapshotAt} is not null then coalesce(${value}, 0) else 0 end), 0) as author_value
+	from ${plugins}
+	where ${plugins.id} = ${id} or ${plugins.author} = ${id}`);
+	if (row?.exact) return row.exact_value;
+	return row?.authored ? row.author_value : null;
 }
 
 export type BadgeRank = { rank: number; total: number; value: number };
@@ -63,48 +66,39 @@ export type BadgeRank = { rank: number; total: number; value: number };
  * dotted id, among authors for a bare id (plugin of that exact id wins).
  */
 export async function badgeRank(db: DrizzleDb, stat: RankStat, id: string): Promise<BadgeRank | null> {
-	if (id.includes(".")) return rankPlugin(db, stat, id);
-	const [plugin] = await db.select({ id: plugins.id }).from(plugins).where(eq(plugins.id, id)).all();
-	return plugin ? rankPlugin(db, stat, id) : rankAuthor(db, stat, id);
-}
+	if (id.includes(".")) {
+		const [row] = await db.all<BadgeRank>(sql`with scores as (
+			select ${plugins.id} as id, ${score(stat)} as value
+			from ${plugins}
+			where ${hasScore(stat)}
+		), ranked as (
+			select id, value, rank() over (order by value desc) as rank, count(*) over () as total
+			from scores
+		)
+		select rank, total, value from ranked where id = ${id}`);
+		return row ?? null;
+	}
 
-async function rankPlugin(db: DrizzleDb, stat: RankStat, id: string): Promise<BadgeRank | null> {
-	const [target] = await db
-		.select({ value: score(stat).as("value") })
-		.from(plugins)
-		.where(and(eq(plugins.id, id), hasScore(stat)))
-		.all();
-	if (!target) return null;
-	const [ahead] = await db
-		.select({ n: count() })
-		.from(plugins)
-		.where(and(hasScore(stat), sql`${score(stat)} > ${target.value}`))
-		.all();
-	const [total] = await db.select({ n: count() }).from(plugins).where(hasScore(stat)).all();
-	return { rank: ahead.n + 1, total: total.n, value: target.value };
-}
-
-async function rankAuthor(db: DrizzleDb, stat: RankStat, id: string): Promise<BadgeRank | null> {
-	const [mine] = await db
-		.select({ n: count(), s: authorScore(stat).as("s") })
-		.from(plugins)
-		.where(and(eq(plugins.author, id), isNotNull(plugins.currentSnapshotAt)))
-		.all();
-	if (!mine || mine.n === 0) return null;
-	const ahead = db
-		.select({ author: plugins.author })
-		.from(plugins)
-		.where(hasScore(stat))
-		.groupBy(plugins.author)
-		.having(sql`${authorScore(stat)} > ${mine.s}`)
-		.as("ahead");
-	const ranked = db
-		.select({ author: plugins.author })
-		.from(plugins)
-		.where(hasScore(stat))
-		.groupBy(plugins.author)
-		.as("ranked");
-	const [aheadCount] = await db.select({ n: count() }).from(ahead).all();
-	const [totalCount] = await db.select({ n: count() }).from(ranked).all();
-	return { rank: aheadCount.n + 1, total: totalCount.n, value: mine.s };
+	const [row] = await db.all<BadgeRank>(sql`with plugin_scores as (
+		select ${plugins.id} as id, ${score(stat)} as value
+		from ${plugins}
+		where ${hasScore(stat)}
+	), plugin_ranked as (
+		select id, value, rank() over (order by value desc) as rank, count(*) over () as total
+		from plugin_scores
+	), author_scores as (
+		select ${plugins.author} as id, ${authorScore(stat)} as value
+		from ${plugins}
+		where ${hasScore(stat)}
+		group by ${plugins.author}
+	), author_ranked as (
+		select id, value, rank() over (order by value desc) as rank, count(*) over () as total
+		from author_scores
+	)
+	select rank, total, value from plugin_ranked where id = ${id}
+	union all
+	select rank, total, value from author_ranked
+	where id = ${id} and not exists (select 1 from ${plugins} where ${plugins.id} = ${id})
+	limit 1`);
+	return row ?? null;
 }

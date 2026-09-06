@@ -11,7 +11,11 @@ import type { DrizzleDb } from "@/lib/db";
 // Mirror of src/db/schema.ts's plugins table so drizzle's insert (which
 // writes every column) works. bun:sqlite runs the exact SQL drizzle generates
 // for D1.
-const db = drizzle({ client: new Database(":memory:") }) as unknown as DrizzleDb;
+let queryCount = 0;
+const db = drizzle({
+	client: new Database(":memory:"),
+	logger: { logQuery: () => queryCount++ },
+}) as unknown as DrizzleDb;
 db.run(sql`CREATE TABLE plugins (
 	id TEXT PRIMARY KEY,
 	name TEXT,
@@ -85,5 +89,18 @@ describe("badge providers", () => {
 		expect((await badgeRank(db, "views", "bob"))?.value).toBe(100);
 		expect((await badgeRank(db, "avg", "alice.two"))?.rank).toBe(1);
 		expect((await badgeRank(db, "avg", "alice"))?.value).toBe((300 + 30 + 15) / 3);
+	});
+
+	it("keeps each badge lookup to one statement", async () => {
+		for (const lookup of [
+			() => badgeValue(db, "views", "alice.one"),
+			() => badgeValue(db, "views", "alice"),
+			() => badgeRank(db, "views", "alice.one"),
+			() => badgeRank(db, "views", "alice"),
+		]) {
+			const before = queryCount;
+			await lookup();
+			expect(queryCount - before).toBe(1);
+		}
 	});
 });

@@ -128,9 +128,10 @@ captured before the upsert — never against `plugin_snapshots`.
 
 ## Charts and badges
 
-Chart and badge providers are data-only modules: `src/lib/charts.ts` and
-`src/lib/badges.ts`. The API routes expose their JSON payloads; external
-renderers consume those payloads. Keep the chart shape stable:
+Chart providers are data-only modules in `src/lib/charts.ts`; external
+renderers consume their JSON payloads. Badge queries live in
+`src/lib/badges.ts`, while `src/lib/badge-svg.ts` renders the standalone SVG;
+badge routes return SVG by default and legacy JSON from `.json`. Keep the chart shape stable:
 `points: [{date, count}]`, matching the JSONPath contract
 `query=$.points[*].count&dateQuery=$.points[*].date`.
 

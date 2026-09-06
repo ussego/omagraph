@@ -70,8 +70,20 @@ do the rest, so charts, frames, and chrome re-theme together.
 - A graph caption, including its brackets, matches the graph's data-role color. Mixed-status graphs
   keep an accent caption and color each row by status. Axes, frames, empty cells, and explanatory
   copy remain neutral.
-- A color appears only when its role exists. Navigation, controls, tables, badges, page headings,
-  and body copy keep their existing semantic UI tokens.
+- A color appears only when its role exists. Navigation, controls, tables, UI badges, page headings,
+  and body copy keep their existing semantic UI tokens. Embeddable Badge SVGs use the primary accent
+  as described below.
+
+## Embeddable Badge SVGs
+
+- Standalone badges are 20px-high, square two-field SVGs: mono uppercase label and value, with the
+  value field in `--graph-accent` blue and a 1px frame using the standard 2px dash / 5px gap rhythm.
+- Use Geist Mono first, then system monospace fallbacks. The `.json` representation keeps its
+  per-stat color for bot compatibility; SVGs always use the primary accent.
+- A fetched SVG cannot inherit the site's theme, and common README renderers do not reliably support
+  CSS variables or OKLCH. `src/lib/badge-svg.ts` therefore freezes the dark background, light text,
+  and light-mode `--graph-accent` as sRGB values. This is the exception to the token-only color rule;
+  update those values when their source tokens change.
 
 ## Frame grammar (the utilities)
 

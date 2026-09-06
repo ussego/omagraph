@@ -11,7 +11,7 @@ export const Route = createFileRoute("/api-docs")({
 	head: () =>
 		pageHead(
 			"Public API Docs · Omachi",
-			"Omachi's public JSON API: plugins, authors, leaderboards, badges, and charts for external renderers and embedders.",
+			"Omachi's public API: plugins, authors, leaderboards, badges, and charts for external renderers and embedders.",
 			"/api-docs",
 		),
 	component: ApiDocsPage,
@@ -37,10 +37,9 @@ function ApiDocsPage() {
 			</div>
 
 			<p className="max-w-2xl text-muted-foreground">
-				Unauthenticated GET JSON for external renderers and embedders. Base URL is <Code>{BASE}</Code>; GETs are
-				edge-cached for one hour (<Code>/api/leaderboard/trending</Code> for eight). Badge and chart payloads
-				are rendered by external renderers — see <Code>/badges</Code> and <Code>/charts</Code> for the embed
-				guides.
+				Unauthenticated GET endpoints for external renderers and embedders. Base URL is <Code>{BASE}</Code>; GETs
+				are edge-cached for one hour (<Code>/api/leaderboard/trending</Code> for eight). See <Code>/badges</Code>
+				and <Code>/charts</Code> for the embed guides.
 			</p>
 
 			<div className="flex flex-col gap-3">
@@ -117,13 +116,15 @@ function ApiDocsPage() {
 			<div className="flex flex-col gap-3">
 				<h2 className="font-heading text-xl">Badges and charts</h2>
 				<p className="max-w-2xl text-muted-foreground">
-					Badges return shields.io endpoint JSON (<Code>schemaVersion/label/message/color</Code>); chart
-					endpoints return <Code>{"{title, total, points: [{date, count}]}"}</Code>. Full params and live
-					examples live on their pages:
+					Badge endpoints return SVG by default and with <Code>.svg</Code>; append <Code>.json</Code> for the
+					legacy shields.io schema used by bots. Chart endpoints return{" "}
+					<Code>{"{title, total, points: [{date, count}]}"}</Code>. Full params and live examples live on their
+					pages:
 				</p>
 				<ul className="list-inside list-disc text-muted-foreground">
 					<li>
-						<Code>GET /api/badges/:stat/:id</Code> and <Code>GET /api/badges/ranking/:stat/:id</Code> — see{" "}
+						<Code>GET /api/badges/:stat/:id.svg</Code> and{" "}
+						<Code>GET /api/badges/ranking/:stat/:id.svg</Code> — see{" "}
 						<a href="/badges" className="underline decoration-dotted underline-offset-4">
 							/badges
 						</a>
@@ -138,7 +139,8 @@ function ApiDocsPage() {
 						.
 					</li>
 				</ul>
-				<Snippet lang="shell">{`curl "${BASE}/api/badges/hearts/ussego.otoru"`}</Snippet>
+				<Snippet lang="shell">{`curl "${BASE}/api/badges/hearts/ussego.otoru.svg"`}</Snippet>
+				<Snippet lang="shell">{`curl "${BASE}/api/badges/hearts/ussego.otoru.json"`}</Snippet>
 			</div>
 
 			<div className="flex flex-col gap-3">
