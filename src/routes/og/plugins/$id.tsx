@@ -129,7 +129,7 @@ function PluginOgCard({
 					display: "flex",
 					flexDirection: "column",
 					height: "100%",
-					paddingTop: 24,
+					padding: 40,
 				}}
 			>
 				<div style={{ fontFamily: "Geist Mono, monospace", fontSize: 18, color: ACCENT, letterSpacing: 3 }}>
