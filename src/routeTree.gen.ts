@@ -49,7 +49,7 @@ import { Route as ApiStatsVerifiedRouteImport } from './routes/api/stats/verifie
 import { Route as OgPluginsIdRouteImport } from './routes/og/plugins/$id'
 import { Route as ApiBadgesStatIdRouteImport } from './routes/api/badges/$stat/$id'
 import { Route as ApiBadgesWinnerIdRouteImport } from './routes/api/badges/winner/$id'
-import { Route as ApiChartsOmastatsKindRouteImport } from './routes/api/charts/omastats/$kind'
+import { Route as ApiChartsOmagraphKindRouteImport } from './routes/api/charts/omagraph/$kind'
 import { Route as ApiBadgesRankingStatIdRouteImport } from './routes/api/badges/ranking/$stat/$id'
 import { Route as ApiChartsAuthorLoginMetricRouteImport } from './routes/api/charts/author/$login/$metric'
 import { Route as ApiChartsPluginIdMetricRouteImport } from './routes/api/charts/plugin/$id/$metric'
@@ -254,9 +254,9 @@ const ApiBadgesWinnerIdRoute = ApiBadgesWinnerIdRouteImport.update({
   path: '/api/badges/winner/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiChartsOmastatsKindRoute = ApiChartsOmastatsKindRouteImport.update({
-  id: '/api/charts/omastats/$kind',
-  path: '/api/charts/omastats/$kind',
+const ApiChartsOmagraphKindRoute = ApiChartsOmagraphKindRouteImport.update({
+  id: '/api/charts/omagraph/$kind',
+  path: '/api/charts/omagraph/$kind',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiBadgesRankingStatIdRoute = ApiBadgesRankingStatIdRouteImport.update({
@@ -317,7 +317,7 @@ export interface FileRoutesByFullPath {
   '/og/plugins/$id': typeof OgPluginsIdRoute
   '/api/badges/$stat/$id': typeof ApiBadgesStatIdRoute
   '/api/badges/winner/$id': typeof ApiBadgesWinnerIdRoute
-  '/api/charts/omastats/$kind': typeof ApiChartsOmastatsKindRoute
+  '/api/charts/omagraph/$kind': typeof ApiChartsOmagraphKindRoute
   '/api/badges/ranking/$stat/$id': typeof ApiBadgesRankingStatIdRoute
   '/api/charts/author/$login/$metric': typeof ApiChartsAuthorLoginMetricRoute
   '/api/charts/plugin/$id/$metric': typeof ApiChartsPluginIdMetricRoute
@@ -363,7 +363,7 @@ export interface FileRoutesByTo {
   '/og/plugins/$id': typeof OgPluginsIdRoute
   '/api/badges/$stat/$id': typeof ApiBadgesStatIdRoute
   '/api/badges/winner/$id': typeof ApiBadgesWinnerIdRoute
-  '/api/charts/omastats/$kind': typeof ApiChartsOmastatsKindRoute
+  '/api/charts/omagraph/$kind': typeof ApiChartsOmagraphKindRoute
   '/api/badges/ranking/$stat/$id': typeof ApiBadgesRankingStatIdRoute
   '/api/charts/author/$login/$metric': typeof ApiChartsAuthorLoginMetricRoute
   '/api/charts/plugin/$id/$metric': typeof ApiChartsPluginIdMetricRoute
@@ -410,7 +410,7 @@ export interface FileRoutesById {
   '/og/plugins/$id': typeof OgPluginsIdRoute
   '/api/badges/$stat/$id': typeof ApiBadgesStatIdRoute
   '/api/badges/winner/$id': typeof ApiBadgesWinnerIdRoute
-  '/api/charts/omastats/$kind': typeof ApiChartsOmastatsKindRoute
+  '/api/charts/omagraph/$kind': typeof ApiChartsOmagraphKindRoute
   '/api/badges/ranking/$stat/$id': typeof ApiBadgesRankingStatIdRoute
   '/api/charts/author/$login/$metric': typeof ApiChartsAuthorLoginMetricRoute
   '/api/charts/plugin/$id/$metric': typeof ApiChartsPluginIdMetricRoute
@@ -458,7 +458,7 @@ export interface FileRouteTypes {
     | '/og/plugins/$id'
     | '/api/badges/$stat/$id'
     | '/api/badges/winner/$id'
-    | '/api/charts/omastats/$kind'
+    | '/api/charts/omagraph/$kind'
     | '/api/badges/ranking/$stat/$id'
     | '/api/charts/author/$login/$metric'
     | '/api/charts/plugin/$id/$metric'
@@ -504,7 +504,7 @@ export interface FileRouteTypes {
     | '/og/plugins/$id'
     | '/api/badges/$stat/$id'
     | '/api/badges/winner/$id'
-    | '/api/charts/omastats/$kind'
+    | '/api/charts/omagraph/$kind'
     | '/api/badges/ranking/$stat/$id'
     | '/api/charts/author/$login/$metric'
     | '/api/charts/plugin/$id/$metric'
@@ -550,7 +550,7 @@ export interface FileRouteTypes {
     | '/og/plugins/$id'
     | '/api/badges/$stat/$id'
     | '/api/badges/winner/$id'
-    | '/api/charts/omastats/$kind'
+    | '/api/charts/omagraph/$kind'
     | '/api/badges/ranking/$stat/$id'
     | '/api/charts/author/$login/$metric'
     | '/api/charts/plugin/$id/$metric'
@@ -594,7 +594,7 @@ export interface RootRouteChildren {
   OgPluginsIdRoute: typeof OgPluginsIdRoute
   ApiBadgesStatIdRoute: typeof ApiBadgesStatIdRoute
   ApiBadgesWinnerIdRoute: typeof ApiBadgesWinnerIdRoute
-  ApiChartsOmastatsKindRoute: typeof ApiChartsOmastatsKindRoute
+  ApiChartsOmagraphKindRoute: typeof ApiChartsOmagraphKindRoute
   ApiBadgesRankingStatIdRoute: typeof ApiBadgesRankingStatIdRoute
   ApiChartsAuthorLoginMetricRoute: typeof ApiChartsAuthorLoginMetricRoute
   ApiChartsPluginIdMetricRoute: typeof ApiChartsPluginIdMetricRoute
@@ -882,11 +882,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiBadgesWinnerIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/charts/omastats/$kind': {
-      id: '/api/charts/omastats/$kind'
-      path: '/api/charts/omastats/$kind'
-      fullPath: '/api/charts/omastats/$kind'
-      preLoaderRoute: typeof ApiChartsOmastatsKindRouteImport
+    '/api/charts/omagraph/$kind': {
+      id: '/api/charts/omagraph/$kind'
+      path: '/api/charts/omagraph/$kind'
+      fullPath: '/api/charts/omagraph/$kind'
+      preLoaderRoute: typeof ApiChartsOmagraphKindRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/badges/ranking/$stat/$id': {
@@ -977,7 +977,7 @@ const rootRouteChildren: RootRouteChildren = {
   OgPluginsIdRoute: OgPluginsIdRoute,
   ApiBadgesStatIdRoute: ApiBadgesStatIdRoute,
   ApiBadgesWinnerIdRoute: ApiBadgesWinnerIdRoute,
-  ApiChartsOmastatsKindRoute: ApiChartsOmastatsKindRoute,
+  ApiChartsOmagraphKindRoute: ApiChartsOmagraphKindRoute,
   ApiBadgesRankingStatIdRoute: ApiBadgesRankingStatIdRoute,
   ApiChartsAuthorLoginMetricRoute: ApiChartsAuthorLoginMetricRoute,
   ApiChartsPluginIdMetricRoute: ApiChartsPluginIdMetricRoute,
@@ -985,13 +985,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

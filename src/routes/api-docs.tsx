@@ -132,7 +132,7 @@ function ApiDocsPage() {
 					</li>
 					<li>
 						<Code>GET /api/charts/plugin/:id/:metric</Code>, <Code>/api/charts/author/:login/:metric</Code>,{" "}
-						<Code>/api/charts/omastats/:kind</Code> — see{" "}
+						<Code>/api/charts/omagraph/:kind</Code> — see{" "}
 						<a href="/charts" className="underline decoration-dotted underline-offset-4">
 							/charts
 						</a>

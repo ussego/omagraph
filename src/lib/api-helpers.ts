@@ -83,4 +83,4 @@ export const stripChartExt = (s: string): string | null =>
 	s.toLowerCase().endsWith(".svg") ? null : s.toLowerCase().endsWith(".json") ? s.slice(0, -5) : s;
 
 export const CHART_SVG_POINTER =
-	"omastats doesn't render SVG — feed shieldcn's /chart/json.svg this URL without the .svg (and without .json; its fetcher rejects dot-suffixed URLs), e.g. ?url=<this without extension>&query=$.points[*].count&dateQuery=$.points[*].date";
+	"omagraph doesn't render SVG — feed shieldcn's /chart/json.svg this URL without the .svg (and without .json; its fetcher rejects dot-suffixed URLs), e.g. ?url=<this without extension>&query=$.points[*].count&dateQuery=$.points[*].date";

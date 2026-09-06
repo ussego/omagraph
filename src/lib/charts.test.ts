@@ -6,12 +6,12 @@ import { drizzle } from "drizzle-orm/bun-sqlite";
 
 import { pluginSnapshots, plugins, updateEvents, verificationEvents } from "@/db/schema";
 import {
-	omastatsAuthor,
-	omastatsPlugin,
-	omastatsPublished,
-	omastatsTotal,
-	omastatsUpdated,
-	omastatsVerified,
+	omagraphAuthor,
+	omagraphPlugin,
+	omagraphPublished,
+	omagraphTotal,
+	omagraphUpdated,
+	omagraphVerified,
 } from "@/lib/charts";
 import type { DrizzleDb } from "@/lib/db";
 
@@ -138,50 +138,50 @@ await db
 
 describe("chart data providers", () => {
 	it("returns correctly bucketed aggregate series", async () => {
-		const pub = await omastatsPublished(db);
+		const pub = await omagraphPublished(db);
 		expect(pub.total).toBe(3);
 		expect(pub.points).toHaveLength(3);
 		expect(pub.points[0]).toMatchObject({ count: 1, date: "2026-05-01" });
 		expect(pub.points[1]?.count).toBe(1);
 		expect(pub.points[2]?.count).toBe(1);
 
-		const pubDay = await omastatsPublished(db, "day");
+		const pubDay = await omagraphPublished(db, "day");
 		expect(pubDay.points.map((p) => p.date).join(",")).toBe("2026-05-15,2026-06-20,2026-07-10");
-		const pubYear = await omastatsPublished(db, "year");
+		const pubYear = await omagraphPublished(db, "year");
 		expect(pubYear.points).toHaveLength(1);
 		expect(pubYear.points[0]?.date).toBe("2026-01-01");
 
-		const total = await omastatsTotal(db);
+		const total = await omagraphTotal(db);
 		expect(total.total).toBe(3);
 		expect(total.points).toHaveLength(3);
 		expect(total.points.map((p) => p.count)).toEqual([1, 2, 3]);
 
-		const upd = await omastatsUpdated(db);
+		const upd = await omagraphUpdated(db);
 		expect(upd.total).toBe(3);
 		expect(upd.points).toHaveLength(3);
 	});
 
 	it("filters verification series by status", async () => {
-		expect((await omastatsVerified(db, null)).total).toBe(3);
-		expect((await omastatsVerified(db, "verified")).total).toBe(2);
-		expect((await omastatsVerified(db, "broken")).total).toBe(1);
+		expect((await omagraphVerified(db, null)).total).toBe(3);
+		expect((await omagraphVerified(db, "verified")).total).toBe(2);
+		expect((await omagraphVerified(db, "broken")).total).toBe(1);
 	});
 
 	it("returns plugin history and author aggregates", async () => {
-		const pluginHearts = await omastatsPlugin(db, "alice.one", "hearts");
+		const pluginHearts = await omagraphPlugin(db, "alice.one", "hearts");
 		expect(pluginHearts).not.toBeNull();
 		expect(pluginHearts?.total).toBe(100);
 		expect(pluginHearts?.points).toHaveLength(2);
 		expect(pluginHearts?.points.map((p) => p.count)).toEqual([80, 100]);
 
-		expect(await omastatsPlugin(db, "ghost.plugin", "hearts")).toBeNull();
+		expect(await omagraphPlugin(db, "ghost.plugin", "hearts")).toBeNull();
 
-		const aliceHearts = await omastatsAuthor(db, "alice", "hearts");
+		const aliceHearts = await omagraphAuthor(db, "alice", "hearts");
 		expect(aliceHearts).not.toBeNull();
 		expect(aliceHearts?.total).toBe(300);
 		expect(aliceHearts?.points).toHaveLength(2);
 		expect(aliceHearts?.points.map((p) => p.count)).toEqual([230, 300]);
 
-		expect(await omastatsAuthor(db, "nobody", "hearts")).toBeNull();
+		expect(await omagraphAuthor(db, "nobody", "hearts")).toBeNull();
 	});
 });

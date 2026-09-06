@@ -4,9 +4,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { drizzle } from "drizzle-orm/d1";
 import { CHART_SVG_POINTER, stripChartExt } from "@/lib/api-helpers";
 import type { ChartSeriesResponse } from "@/lib/api-types";
-import { omastatsPublished, omastatsTotal, omastatsUpdated, omastatsVerified } from "@/lib/charts";
+import { omagraphPublished, omagraphTotal, omagraphUpdated, omagraphVerified } from "@/lib/charts";
 
-export const Route = createFileRoute("/api/charts/omastats/$kind")({
+export const Route = createFileRoute("/api/charts/omagraph/$kind")({
 	server: {
 		handlers: {
 			GET: async ({ params, request }) => {
@@ -23,17 +23,17 @@ export const Route = createFileRoute("/api/charts/omastats/$kind")({
 							: "month";
 				const series =
 					kind === "published"
-						? await omastatsPublished(db, groupBy)
+						? await omagraphPublished(db, groupBy)
 						: kind === "updated"
-							? await omastatsUpdated(db, groupBy)
+							? await omagraphUpdated(db, groupBy)
 							: kind === "verified"
-								? await omastatsVerified(db, q.get("toStatus"), groupBy)
+								? await omagraphVerified(db, q.get("toStatus"), groupBy)
 								: kind === "total"
-									? await omastatsTotal(db, groupBy)
+									? await omagraphTotal(db, groupBy)
 									: null;
 				if (!series)
 					return Response.json(
-						{ error: "usage: /api/charts/omastats/{published|updated|verified|total}" },
+						{ error: "usage: /api/charts/omagraph/{published|updated|verified|total}" },
 						{ status: 400 },
 					);
 				return Response.json(series satisfies ChartSeriesResponse);

@@ -41,20 +41,20 @@ const EXAMPLES: { path: string; src: string }[] = [
 		src: `https://shieldcn.dev/chart/json.svg?url=${BASE}/author/ussego/copies&${PICK}&title=Author+Copies&${SIZE}`,
 	},
 	{
-		path: "/api/charts/omastats/published",
-		src: `https://shieldcn.dev/chart/json.svg?url=${BASE}/omastats/published&${PICK}&title=Plugins+published&${SIZE}`,
+		path: "/api/charts/omagraph/published",
+		src: `https://shieldcn.dev/chart/json.svg?url=${BASE}/omagraph/published&${PICK}&title=Plugins+published&${SIZE}`,
 	},
 	{
-		path: "/api/charts/omastats/total",
-		src: `https://shieldcn.dev/chart/json.svg?url=${BASE}/omastats/total&${PICK}&title=Total+plugins&${SIZE}`,
+		path: "/api/charts/omagraph/total",
+		src: `https://shieldcn.dev/chart/json.svg?url=${BASE}/omagraph/total&${PICK}&title=Total+plugins&${SIZE}`,
 	},
 	{
-		path: "/api/charts/omastats/updated",
-		src: `https://shieldcn.dev/chart/json.svg?url=${BASE}/omastats/updated&${PICK}&title=Plugin+updates&${SIZE}`,
+		path: "/api/charts/omagraph/updated",
+		src: `https://shieldcn.dev/chart/json.svg?url=${BASE}/omagraph/updated&${PICK}&title=Plugin+updates&${SIZE}`,
 	},
 	{
-		path: "/api/charts/omastats/verified",
-		src: `https://shieldcn.dev/chart/json.svg?url=${BASE}/omastats/verified&${PICK}&title=Verifications&${SIZE}`,
+		path: "/api/charts/omagraph/verified",
+		src: `https://shieldcn.dev/chart/json.svg?url=${BASE}/omagraph/verified&${PICK}&title=Verifications&${SIZE}`,
 	},
 ];
 
@@ -102,7 +102,7 @@ function ChartsPage() {
 
 			<div className="flex flex-col gap-3">
 				<h2 className="font-heading text-xl">Endpoints</h2>
-				<Snippet>{`GET /api/charts/omastats/{published|updated|verified|total}`}</Snippet>
+				<Snippet>{`GET /api/charts/omagraph/{published|updated|verified|total}`}</Snippet>
 				<ul className="list-inside list-disc text-muted-foreground">
 					<li>
 						Catalog-wide time series from <Code>plugins</Code>, <Code>update_events</Code>, and{" "}
@@ -163,7 +163,7 @@ function ChartsPage() {
 					Point shieldcn's chart endpoint at the JSON; it fetches the JSON, applies the JSONPath, and renders:
 				</p>
 				<Snippet>
-					{`https://shieldcn.dev/chart/json.svg?url=https://stats.ussego.com/api/charts/omastats/published&query=$.points[*].count&dateQuery=$.points[*].date&title=Plugins+published`}
+					{`https://shieldcn.dev/chart/json.svg?url=https://stats.ussego.com/api/charts/omagraph/published&query=$.points[*].count&dateQuery=$.points[*].date&title=Plugins+published`}
 				</Snippet>
 				<p className="text-muted-foreground">
 					The <Code>url</Code> must be extensionless: shieldcn's fetcher rejects dot-suffixed URLs, so drop
@@ -171,7 +171,7 @@ function ChartsPage() {
 				</p>
 				<p className="text-muted-foreground">Embed in markdown:</p>
 				<Snippet lang="markdown">
-					{`![new plugins](https://shieldcn.dev/chart/json.svg?url=https://stats.ussego.com/api/charts/omastats/published&query=$.points[*].count&dateQuery=$.points[*].date&title=Plugins+published)`}
+					{`![new plugins](https://shieldcn.dev/chart/json.svg?url=https://stats.ussego.com/api/charts/omagraph/published&query=$.points[*].count&dateQuery=$.points[*].date&title=Plugins+published)`}
 				</Snippet>
 			</div>
 		</div>

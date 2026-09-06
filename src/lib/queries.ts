@@ -69,7 +69,7 @@ export function statsQuery(
 export function totalStatsQuery(groupBy: Granularity) {
 	return queryOptions({
 		queryKey: ["stats", "total", groupBy],
-		queryFn: () => get<ChartSeriesResponse>(`/api/charts/omastats/total?groupBy=${groupBy}`),
+		queryFn: () => get<ChartSeriesResponse>(`/api/charts/omagraph/total?groupBy=${groupBy}`),
 	});
 }
 

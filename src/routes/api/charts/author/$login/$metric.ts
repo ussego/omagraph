@@ -4,7 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { drizzle } from "drizzle-orm/d1";
 import { CHART_SVG_POINTER, chartMetric, stripChartExt } from "@/lib/api-helpers";
 import type { ChartSeriesResponse } from "@/lib/api-types";
-import { omastatsAuthor } from "@/lib/charts";
+import { omagraphAuthor } from "@/lib/charts";
 
 export const Route = createFileRoute("/api/charts/author/$login/$metric")({
 	server: {
@@ -15,7 +15,7 @@ export const Route = createFileRoute("/api/charts/author/$login/$metric")({
 				const metric = chartMetric(metricRaw);
 				if (!metric)
 					return Response.json({ error: "metric must be hearts, views, or copies" }, { status: 400 });
-				const series = await omastatsAuthor(drizzle(env.DB), params.login, metric);
+				const series = await omagraphAuthor(drizzle(env.DB), params.login, metric);
 				if (!series) return Response.json({ error: "not found" }, { status: 404 });
 				return Response.json(series satisfies ChartSeriesResponse);
 			},

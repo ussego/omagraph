@@ -2,7 +2,7 @@
  * charts.ts
  *
  * D1-backed chart-data providers. Rendering is shieldcn's job (its
- * `/chart/json.svg` pulls JSON via JSONPath); omastats only serves the
+ * `/chart/json.svg` pulls JSON via JSONPath); omagraph only serves the
  * series. The JSON shape matches shieldcn's documented example verbatim:
  * `query=$.points[*].count` + `dateQuery=$.points[*].date`.
  *
@@ -192,17 +192,17 @@ async function authorMetricOverTime(
 
 // ── Public API ─────────────────────────────────────────────────────────────
 
-export async function omastatsPublished(db: DrizzleDb, groupBy: GroupBy = "month"): Promise<CumulativeSeries> {
+export async function omagraphPublished(db: DrizzleDb, groupBy: GroupBy = "month"): Promise<CumulativeSeries> {
 	const series = await countsOverTime(db, plugins, plugins.addedAt, [], groupBy);
 	return { ...series, title: "plugins published", subtitle: `${series.total.toLocaleString("en-US")} new` };
 }
 
-export async function omastatsUpdated(db: DrizzleDb, groupBy: GroupBy = "month"): Promise<CumulativeSeries> {
+export async function omagraphUpdated(db: DrizzleDb, groupBy: GroupBy = "month"): Promise<CumulativeSeries> {
 	const series = await countsOverTime(db, updateEvents, updateEvents.occurredAt, [], groupBy);
 	return { ...series, title: "plugin updates", subtitle: `${series.total.toLocaleString("en-US")} updates` };
 }
 
-export async function omastatsVerified(
+export async function omagraphVerified(
 	db: DrizzleDb,
 	toStatus: string | null,
 	groupBy: GroupBy = "month",
@@ -216,12 +216,12 @@ export async function omastatsVerified(
 	};
 }
 
-export async function omastatsTotal(db: DrizzleDb, groupBy: GroupBy = "month"): Promise<CumulativeSeries> {
+export async function omagraphTotal(db: DrizzleDb, groupBy: GroupBy = "month"): Promise<CumulativeSeries> {
 	const series = await totalOverTime(db, groupBy);
 	return { ...series, subtitle: `${series.total.toLocaleString("en-US")} total` };
 }
 
-export function omastatsPlugin(
+export function omagraphPlugin(
 	db: DrizzleDb,
 	pluginId: string,
 	metric: "hearts" | "views" | "copies",
@@ -229,7 +229,7 @@ export function omastatsPlugin(
 	return pluginMetricOverTime(db, pluginId, metric);
 }
 
-export function omastatsAuthor(
+export function omagraphAuthor(
 	db: DrizzleDb,
 	author: string,
 	metric: "hearts" | "views" | "copies",
