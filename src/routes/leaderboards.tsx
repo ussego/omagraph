@@ -2,9 +2,7 @@
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, stripSearchParams, useNavigate } from "@tanstack/react-router";
-import { useMemo } from "react";
 import { z } from "zod";
-import { GraphRank } from "@/components/graph-rank";
 import { GraphSpark } from "@/components/graph-spark";
 import { TrendingTable } from "@/components/trending-table";
 import { Button } from "@/components/ui/button";
@@ -15,10 +13,32 @@ import type { LeaderboardRow } from "@/lib/api-types";
 import { fmt } from "@/lib/format";
 import { authorsQuery, leaderboardQuery, trendingQuery } from "@/lib/queries";
 import { pageHead } from "@/lib/site";
+import { cn } from "@/lib/utils";
 
 const VALID_TABS = ["hearts", "views", "copies", "copies_per_view", "trending", "authors"] as const;
 const LIMITS = [25, 50, 100] as const;
 const DEFAULTS = { tab: "hearts", limit: 25, days: 7 } as const;
+
+// Podium card styling, mirroring the competition podium in competitions.tsx:
+// winner is tallest and centered (sm:order-2), runner-up on its left.
+function podiumSize(place: number) {
+	if (place === 1) return "min-h-52 sm:order-2";
+	if (place === 2) return "min-h-44 sm:order-1";
+	return "sm:order-3";
+}
+
+function placeTone(place: number) {
+	if (place === 1) return "text-graph-accent";
+	if (place === 2) return "text-graph-accent-2";
+	return "text-graph-accent-3";
+}
+
+// Podium card tint: the place color at low alpha at rest, deepened on hover.
+function placeCardTone(place: number) {
+	if (place === 1) return "bg-graph-accent/10 hover:bg-graph-accent/20";
+	if (place === 2) return "bg-graph-accent-2/10 hover:bg-graph-accent-2/20";
+	return "bg-graph-accent-3/10 hover:bg-graph-accent-3/20";
+}
 
 // Zod v4 schema passed straight to validateSearch; `.catch` coerces garbage
 // to the default instead of erroring the route. Tab, Top-N, and trending
@@ -93,28 +113,43 @@ function MetricLeaderboard({ metric }: { metric: (typeof METRIC_TABS)[number] })
 	const { data } = useSuspenseQuery(leaderboardQuery(metric.value, limit, 10));
 
 	const rows = data.rows;
-	// Stable across renders: the rank entrance replays whenever the data array
-	// identity changes, and this map would otherwise make a fresh array on
-	// every re-render. Disambiguate the label by author when multiple plugins
-	// share a name (e.g. three plugins all named "Notification Center"); the
-	// upstream GraphRank keys by label, so collisions would otherwise warn.
-	const chartRows = useMemo(
-		() =>
-			rows.map((r, _i, all) => {
-				const name = r.name ?? r.pluginId;
-				const sameNameCount = all.filter((other) => (other.name ?? other.pluginId) === name).length;
-				const showAuthor = sameNameCount > 1 && r.author;
-				return {
-					label: showAuthor ? `${name} · ${r.author}` : name,
-					value: metric.score(r) ?? 0,
-				};
-			}),
-		[rows, metric],
-	);
+	// Podium shows the top three (which equal the global top three for any
+	// limit ≥ 10), so the table picks up at rank 4 instead of repeating them.
+	const podium = rows.slice(0, 3);
+	const rest = rows.slice(3);
 
 	return (
 		<div className="flex flex-col gap-6">
-			<GraphRank title={metric.label} items={chartRows} tone={metric.tone} />
+			{podium.length > 0 && (
+				<div className="grid items-end gap-3 sm:grid-cols-3">
+					{podium.map((r, i) => {
+						const place = i + 1;
+						const name = r.name ?? r.pluginId;
+						return (
+							<Link
+								key={r.pluginId}
+								to="/plugins/$pluginId"
+								params={{ pluginId: r.pluginId }}
+								title={name}
+								className={cn(
+									"graph-frame relative flex min-h-36 flex-col justify-between gap-8 p-4 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground",
+									podiumSize(place),
+									placeCardTone(place),
+								)}
+							>
+								<div className="flex items-start justify-between gap-3">
+									<span className={cn("font-mono text-4xl leading-none", placeTone(place))}>#{place}</span>
+									<span className="font-mono text-sm text-graph-muted tabular-nums">{fmt(metric.score(r))}</span>
+								</div>
+								<div className="flex min-w-0 flex-col gap-1">
+									<span className="truncate text-base font-medium">{name}</span>
+									{r.author ? <span className="truncate text-xs text-graph-muted">{r.author}</span> : null}
+								</div>
+							</Link>
+						);
+					})}
+				</div>
+			)}
 			<Table>
 				<TableHeader>
 					<TableRow>
@@ -126,9 +161,9 @@ function MetricLeaderboard({ metric }: { metric: (typeof METRIC_TABS)[number] })
 					</TableRow>
 				</TableHeader>
 				<TableBody>
-					{rows.map((r, i) => (
+					{rest.map((r, i) => (
 						<TableRow key={r.pluginId}>
-							<TableCell className="font-mono tabular-nums">{i + 1}</TableCell>
+							<TableCell className="font-mono tabular-nums">{i + 4}</TableCell>
 							<TableCell>
 								<Link
 									to="/plugins/$pluginId"
@@ -216,15 +251,39 @@ function AuthorsLeaderboard() {
 	const { data } = useSuspenseQuery(authorsQuery());
 
 	const rows = data.rows.slice(0, limit);
-	const rankItems = rows.map((row) => ({
-		label: row.author ?? "(unknown)",
-		value: row.hearts ?? 0,
-		display: fmt(row.hearts),
-	}));
+	const podium = rows.slice(0, 3);
+	const rest = rows.slice(3);
 
 	return (
 		<div className="flex flex-col gap-6">
-			<GraphRank title="AUTHOR HEARTS" items={rankItems} tone="category" />
+			{podium.length > 0 && (
+				<div className="grid items-end gap-3 sm:grid-cols-3">
+					{podium.map((r, i) => {
+						const place = i + 1;
+						return (
+							<Link
+								key={r.author}
+								to="/authors/$authorId"
+								params={{ authorId: r.author ?? "" }}
+								className={cn(
+									"graph-frame relative flex min-h-36 flex-col justify-between gap-8 p-4 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground",
+									podiumSize(place),
+									placeCardTone(place),
+								)}
+							>
+								<div className="flex items-start justify-between gap-3">
+									<span className={cn("font-mono text-4xl leading-none", placeTone(place))}>#{place}</span>
+									<span className="font-mono text-sm text-graph-muted tabular-nums">{fmt(r.hearts)}</span>
+								</div>
+								<div className="flex min-w-0 flex-col gap-1">
+									<span className="truncate text-base font-medium">{r.author}</span>
+									<span className="truncate text-xs text-graph-muted">{fmt(r.plugins)} plugins</span>
+								</div>
+							</Link>
+						);
+					})}
+				</div>
+			)}
 			<Table>
 				<TableHeader>
 					<TableRow>
@@ -237,9 +296,9 @@ function AuthorsLeaderboard() {
 					</TableRow>
 				</TableHeader>
 				<TableBody>
-					{rows.map((r, i) => (
+					{rest.map((r, i) => (
 						<TableRow key={r.author}>
-							<TableCell className="font-mono tabular-nums">{i + 1}</TableCell>
+							<TableCell className="font-mono tabular-nums">{i + 4}</TableCell>
 							<TableCell className="font-medium">
 								<Link
 									to="/authors/$authorId"

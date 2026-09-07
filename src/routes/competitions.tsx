@@ -37,10 +37,11 @@ function placeTone(place: number) {
 	return "text-graph-accent-3";
 }
 
-function placeHoverTone(place: number) {
-	if (place === 1) return "hover:bg-graph-accent/10";
-	if (place === 2) return "hover:bg-graph-accent-2/10";
-	return "hover:bg-graph-accent-3/10";
+// Podium card tint: the place color at low alpha at rest, deepened on hover.
+function placeCardTone(place: number) {
+	if (place === 1) return "bg-graph-accent/10 hover:bg-graph-accent/20";
+	if (place === 2) return "bg-graph-accent-2/10 hover:bg-graph-accent-2/20";
+	return "bg-graph-accent-3/10 hover:bg-graph-accent-3/20";
 }
 
 function PlacementLink({ placement, className }: { placement: Placement; className?: string }) {
@@ -78,7 +79,7 @@ function CompetitionPlacements({ placements }: { placements: Placement[] }) {
 									placement.place === 1 && "min-h-52 sm:order-2",
 									placement.place === 2 && "min-h-44 sm:order-1",
 									placement.place === 3 && "sm:order-3",
-									placeHoverTone(placement.place),
+									placeCardTone(placement.place),
 								)}
 							>
 								<div className="flex items-start justify-between gap-3">
