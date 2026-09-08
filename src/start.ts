@@ -52,7 +52,9 @@ async function apiRun<T>(next: () => Promise<T>): Promise<Response | T> {
  * (and the pages hydrated from it) to pre-sync data for hours.
  */
 const CACHE_TTL: [prefix: string, sMaxage: number, maxAge: number][] = [
-	["/api/stats/submissions", 600, 60],
+	// Submissions land every 5 minutes, so a 60s edge TTL surfaces each
+	// sync within a minute; the Cache API underneath still absorbs D1 reads.
+	["/api/stats/submissions", 60, 60],
 	["/api/leaderboard/trending", 28800, 300],
 ];
 
