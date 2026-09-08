@@ -4,7 +4,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, stripSearchParams, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
-import type { GraphTone } from "@/components/graph-frame/graph-frame";
+import { Graph, GraphBody, type GraphTone } from "@/components/graph-frame/graph-frame";
 import { BrokenPluginsTable } from "@/components/broken-plugins-table";
 import { GraphRule } from "@/components/graph-frame/graph-rule";
 import { GraphPlot } from "@/components/graph-plot";
@@ -80,11 +80,9 @@ export const Route = createFileRoute("/health")({
 function StatusChart({
 	title,
 	rows,
-	tags,
 }: {
 	title: string;
 	rows: { status: string | null; count: number }[] | undefined;
-	tags?: { label: string; count: number }[];
 }) {
 	const items = useMemo(
 		() =>
@@ -98,12 +96,39 @@ function StatusChart({
 		[rows],
 	);
 	if (items.length > 0) {
-		return <GraphRank title={title} items={items} tags={tags} className="w-full" />;
+		return <GraphRank title={title} items={items} className="w-full" />;
 	}
 	return (
 		<Empty>
 			<EmptyTitle>No data</EmptyTitle>
 		</Empty>
+	);
+}
+
+function VerificationIssueLabels({ tags }: { tags: SubmissionStatsResponse["verificationTags"] }) {
+	if (tags.length === 0) return null;
+
+	return (
+		<Graph title="VERIFICATION ISSUE LABELS" className="w-full">
+			<GraphBody className="flex flex-col gap-3">
+				<p className="text-graph-muted text-sm">
+					Labels attached to received verification issues, including attempts that were not validated or published.
+				</p>
+				<div className="flex flex-wrap gap-2">
+					{tags.map((tag) => (
+						<Badge
+							aria-label={`${tag.label}, ${fmt(tag.count)} received`}
+							key={tag.label}
+							size="sm"
+							variant="secondary"
+							className="rounded-none font-mono uppercase"
+						>
+							{tag.label} <span className="text-graph-muted">· {fmt(tag.count)}</span>
+						</Badge>
+					))}
+				</div>
+			</GraphBody>
+		</Graph>
 	);
 }
 
@@ -241,11 +266,7 @@ function HealthPage() {
 
 			<div className="flex flex-col gap-12">
 				<StatusChart title="INSTALL AVAILABILITY" rows={breakdown.installStatus} />
-				<StatusChart
-					title="VERIFICATION STATUS"
-					rows={breakdown.verification}
-					tags={submissions.verificationTags}
-				/>
+				<StatusChart title="VERIFICATION STATUS" rows={breakdown.verification} />
 				<SubmissionLoad
 					period={submissionPeriod}
 					stats={submissions}
@@ -253,6 +274,7 @@ function HealthPage() {
 						navigate({ resetScroll: false, search: (prev) => ({ ...prev, submissionPeriod: period }) })
 					}
 				/>
+				<VerificationIssueLabels tags={submissions.verificationTags} />
 			</div>
 
 			<GraphRule />

@@ -5,12 +5,10 @@ import { motion, useReducedMotion } from "motion/react";
 import {
 	Graph,
 	GraphBody,
-	GraphRule,
 	GraphTick,
 	GraphTrack,
 	type GraphTone,
 } from "@/components/graph-frame/graph-frame";
-import { Badge } from "@/components/ui/badge";
 import {
 	fadeUp,
 	type Glyphs,
@@ -27,12 +25,9 @@ type RankItem = {
 	tone?: GraphTone;
 };
 
-type RankTag = { label: string; count: number };
-
 type GraphRankProps = {
 	title: string;
 	items: RankItem[];
-	tags?: RankTag[];
 	max?: number;
 	ticks?: number;
 	glyphs?: Glyphs;
@@ -52,7 +47,7 @@ function formatValue(item: RankItem) {
 	});
 }
 
-function GraphRank({ title, items, tags, max, ticks = 20, glyphs, palette, tone, corner, className }: GraphRankProps) {
+function GraphRank({ title, items, max, ticks = 20, glyphs, palette, tone, corner, className }: GraphRankProps) {
 	const reduce = useReducedMotion();
 	const item = fadeUp(reduce);
 	const peak = max ?? Math.max(...items.map((entry) => entry.value), 1);
@@ -115,24 +110,6 @@ function GraphRank({ title, items, tags, max, ticks = 20, glyphs, palette, tone,
 						);
 					})}
 				</ol>
-				{tags?.length ? (
-					<>
-						<GraphRule className="my-5" />
-						<div className="flex flex-wrap items-center gap-2">
-							<span className="font-mono text-xs text-graph-muted uppercase">Issue tags</span>
-							{tags.map((tag) => (
-								<Badge
-									key={tag.label}
-									size="sm"
-									variant="secondary"
-									className="rounded-none font-mono uppercase"
-								>
-									{tag.label} · {formatValue({ label: tag.label, value: tag.count })}
-								</Badge>
-							))}
-						</div>
-					</>
-				) : null}
 			</GraphBody>
 		</Graph>
 	);
