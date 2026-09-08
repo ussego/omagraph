@@ -51,8 +51,9 @@ export async function ingestSubmissions(
 	purge: () => Promise<unknown>,
 ) {
 	let inserted = 0;
-	for (let index = 0; index < input.events.length; index += 30) {
-		const rows = input.events.slice(index, index + 30).map((event) => ({
+	// ponytail: 20 rows x 4 columns = 80 bound params, under D1's 100-per-statement limit
+	for (let index = 0; index < input.events.length; index += 20) {
+		const rows = input.events.slice(index, index + 20).map((event) => ({
 			...event,
 			labels: JSON.stringify([...new Set(event.labels ?? [])]),
 		}));
