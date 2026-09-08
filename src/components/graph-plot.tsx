@@ -20,6 +20,7 @@ type GraphPlotProps = {
 	title: string;
 	data: number[];
 	labels?: string[];
+	tooltipLabels?: string[];
 	height?: number;
 	variant?: "line" | "area";
 	progress?: number;
@@ -42,6 +43,7 @@ function GraphPlot({
 	title,
 	data,
 	labels,
+	tooltipLabels,
 	height = 7,
 	variant = "area",
 	progress = 1,
@@ -66,7 +68,7 @@ function GraphPlot({
 	const activeIndex = active != null && active >= 0 && active <= last ? active : null;
 	const activePct = activeIndex != null ? ((activeIndex + 0.5) / data.length) * 100 : 0;
 	const activeAlign = activePct < 18 ? "left" : activePct > 82 ? "right" : "center";
-	const activeLabel = activeIndex != null ? labels?.[activeIndex] : undefined;
+	const activeLabel = activeIndex != null ? (tooltipLabels?.[activeIndex] ?? labels?.[activeIndex]) : undefined;
 	const activeValue = activeIndex != null ? (data[activeIndex] ?? 0) : 0;
 	const tooltip =
 		activeIndex != null ? (

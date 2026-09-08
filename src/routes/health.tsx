@@ -136,6 +136,9 @@ function SubmissionKindCharts({
 				title={`${label.toUpperCase()} · ${periodLabel.toUpperCase()}`}
 				data={window.points.map((point) => point[kind])}
 				labels={window.points.map((point) => fmtMonthDay(point.bucket))}
+				tooltipLabels={window.points.map((point) =>
+					period === "hour" ? `${fmtDateTime(point.bucket)} UTC` : `${fmtDate(point.bucket)} UTC`,
+				)}
 				className="w-full"
 			/>
 			<GraphStat
