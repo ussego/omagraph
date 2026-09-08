@@ -176,10 +176,9 @@ function SubmissionKindCharts({
 	const window = submissionWindow(stats, period);
 	const current = window[kind];
 	const allTime = stats.allTime[kind];
-	const periodLabel = period === "hour" ? "Hourly · 24h" : "Daily · 30d";
 
 	return (
-		<Graph title={`${label.toUpperCase()} · ${periodLabel.toUpperCase()}`} tone={tone} className="w-full">
+		<Graph title={label.toUpperCase()} tone={tone} className="w-full">
 			<GraphBody className="flex flex-col gap-6">
 				<GraphPlotBody
 					data={window.points.map((point) => point[kind])}
