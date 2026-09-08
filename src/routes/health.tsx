@@ -235,15 +235,16 @@ function SubmissionLoad({
 		const interval = window.setInterval(() => setNow(Date.now()), 60_000);
 		return () => window.clearInterval(interval);
 	}, []);
-	const sync = submissionSyncPresentation(stats.syncedAt, now);
 	// An empty response (stale edge entry, sync gap) must never blank panels
 	// that already showed data: latch the last non-empty stats and render
-	// those, while the badge keeps reporting live freshness.
+	// those. Freshness also reads the latch, so the badge reports the last
+	// known sync instead of flipping to pending on one empty refetch.
 	const lastGood = useRef<SubmissionStatsResponse | null>(null);
 	if (stats.allTime.plugin.total + stats.allTime.verification.total > 0) {
 		lastGood.current = stats;
 	}
 	const visible = lastGood.current;
+	const sync = submissionSyncPresentation(visible?.syncedAt ?? null, now);
 
 	return (
  		<div className="flex flex-col gap-4">
