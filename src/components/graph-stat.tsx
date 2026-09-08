@@ -46,8 +46,8 @@ function GraphStat({ title, items, tone, corner, className }: GraphStatProps) {
 					viewport={{ once: true, amount: 0.5 }}
 					whileInView="show"
 				>
-					{items.map((entry) => (
-						<motion.li className="flex flex-col gap-2" key={entry.label} variants={item}>
+					{items.map((entry, index) => (
+						<motion.li className="flex flex-col gap-2" key={index} variants={item}>
 							<p
 								className={cn(
 									"text-3xl tracking-tight tabular-nums sm:text-4xl",
