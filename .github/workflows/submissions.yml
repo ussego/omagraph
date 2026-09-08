@@ -1,63 +1,63 @@
 name: Submission sync
 
 on:
-  schedule:
-    - cron: "*/5 * * * *"
-  workflow_dispatch:
+    schedule:
+        - cron: "*/5 * * * *"
+    workflow_dispatch:
 
 permissions:
-  contents: read
+    contents: read
 
 concurrency:
-  group: submission-sync
-  cancel-in-progress: false
+    group: submission-sync
+    cancel-in-progress: false
 
 jobs:
-  sync:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - name: Sync marketplace submission events
-        env:
-          ADMIN_TOKEN: ${{ secrets.ADMIN_TOKEN }}
-          GH_TOKEN: ${{ secrets.MARKETPLACE_GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
+    sync:
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        steps:
+            - name: Sync marketplace submission events
+              env:
+                  ADMIN_TOKEN: ${{ secrets.ADMIN_TOKEN }}
+                  GH_TOKEN: ${{ secrets.MARKETPLACE_GITHUB_TOKEN }}
+              run: |
+                  set -euo pipefail
 
-          admin_url="https://stats.ussego.com/api/admin/submissions"
-          cursor="$(curl --fail-with-body --silent --show-error \
-            -H "x-admin-token: $ADMIN_TOKEN" "$admin_url" | jq -r '.cursor // empty')"
-          next_cursor="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
-          endpoint="repos/omacom/omarchy-plugin-marketplace/issues?state=all&sort=updated&direction=asc&per_page=100"
-          if [[ -n "$cursor" ]]; then
-            since="$(date -u -d "$cursor - 1 second" +"%Y-%m-%dT%H:%M:%SZ")"
-            endpoint="$endpoint&since=$(jq -rn --arg value "$since" '$value | @uri')"
-          fi
+                  admin_url="https://stats.ussego.com/api/admin/submissions"
+                  cursor="$(curl --fail-with-body --silent --show-error \
+                    -H "x-admin-token: $ADMIN_TOKEN" "$admin_url" | jq -r '.cursor // empty')"
+                  next_cursor="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+                  endpoint="repos/omacom/omarchy-plugin-marketplace/issues?state=all&sort=updated&direction=asc&per_page=100"
+                  if [[ -n "$cursor" ]]; then
+                    since="$(date -u -d "$cursor - 1 second" +"%Y-%m-%dT%H:%M:%SZ")"
+                    endpoint="$endpoint&since=$(jq -rn --arg value "$since" '$value | @uri')"
+                  fi
 
-          issues_file="$(mktemp)"
-          trap 'rm -f "$issues_file"' EXIT
-          gh api --paginate --slurp "$endpoint" > "$issues_file"
+                  issues_file="$(mktemp)"
+                  trap 'rm -f "$issues_file"' EXIT
+                  gh api --paginate --slurp "$endpoint" > "$issues_file"
 
-          jq -c '
-            [ .[][]
-              | select(has("pull_request") | not)
-              | if (.title | startswith("[Plugin]:")) then
-                  { issueNumber: .number, kind: "plugin", occurredAt: .created_at, labels: [.labels[]?.name] }
-                elif (.title | startswith("[Verify]:")) then
-                  { issueNumber: .number, kind: "verification", occurredAt: .created_at, labels: [.labels[]?.name] }
-                else empty end
-            ]
-            | [range(0; length; 500) as $start | .[$start:$start + 500]][]
-          ' "$issues_file" | while IFS= read -r events; do
-            jq -nc --argjson events "$events" '{events: $events}' |
-              curl --fail-with-body --silent --show-error -X POST \
-                -H "content-type: application/json" \
-                -H "x-admin-token: $ADMIN_TOKEN" \
-                --data-binary @- "$admin_url"
-          done
+                  jq -c '
+                    [ .[][]
+                      | select(has("pull_request") | not)
+                      | if (.title | startswith("[Plugin]:")) then
+                          { issueNumber: .number, kind: "plugin", occurredAt: .created_at, labels: [.labels[]?.name] }
+                        elif (.title | startswith("[Verify]:")) then
+                          { issueNumber: .number, kind: "verification", occurredAt: .created_at, labels: [.labels[]?.name] }
+                        else empty end
+                    ]
+                    | [range(0; length; 500) as $start | .[$start:$start + 500]][]
+                  ' "$issues_file" | while IFS= read -r events; do
+                    jq -nc --argjson events "$events" '{events: $events}' |
+                      curl --fail-with-body --silent --show-error -X POST \
+                        -H "content-type: application/json" \
+                        -H "x-admin-token: $ADMIN_TOKEN" \
+                        --data-binary @- "$admin_url"
+                  done
 
-          jq -nc --arg cursor "$next_cursor" '{events: [], cursor: $cursor}' |
-            curl --fail-with-body --silent --show-error -X POST \
-              -H "content-type: application/json" \
-              -H "x-admin-token: $ADMIN_TOKEN" \
-              --data-binary @- "$admin_url"
+                  jq -nc --arg cursor "$next_cursor" '{events: [], cursor: $cursor}' |
+                    curl --fail-with-body --silent --show-error -X POST \
+                      -H "content-type: application/json" \
+                      -H "x-admin-token: $ADMIN_TOKEN" \
+                      --data-binary @- "$admin_url"
