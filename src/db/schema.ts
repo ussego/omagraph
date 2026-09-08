@@ -102,6 +102,7 @@ export const submissionEvents = sqliteTable(
 		issueNumber: integer("issue_number").primaryKey(),
 		kind: text("kind", { enum: ["plugin", "verification"] }).notNull(),
 		occurredAt: text("occurred_at").notNull(),
+		labels: text("labels").notNull().default("[]"), // JSON-encoded GitHub issue labels
 	},
 	(t) => [index("submission_events_time_idx").on(t.occurredAt)],
 );

@@ -2,13 +2,20 @@ import { asc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { meta, submissionEvents } from "@/db/schema";
-import type { SubmissionKind, SubmissionStatsResponse, SubmissionWindow, SubmissionWindowKind } from "@/lib/api-types";
+import type {
+	SubmissionKind,
+	SubmissionStatsResponse,
+	SubmissionTag,
+	SubmissionWindow,
+	SubmissionWindowKind,
+} from "@/lib/api-types";
 import type { DrizzleDb } from "@/lib/db";
 
 export type SubmissionEvent = {
 	issueNumber: number;
 	kind: SubmissionKind;
 	occurredAt: string;
+	labels?: string[];
 };
 
 const HOUR_MS = 60 * 60 * 1000;
@@ -25,6 +32,7 @@ export const submissionIngestSchema = z
 					issueNumber: z.number().int().positive(),
 					kind: z.enum(KINDS),
 					occurredAt: ISO_DATE,
+					labels: z.array(z.string().trim().min(1).max(100)).max(20).optional().default([]),
 				}),
 			)
 			.max(500),
@@ -39,15 +47,19 @@ export async function readSubmissionCursor(db: DrizzleDb) {
 
 export async function ingestSubmissions(
 	db: DrizzleDb,
-	input: z.infer<typeof submissionIngestSchema>,
+	input: z.input<typeof submissionIngestSchema>,
 	purge: () => Promise<unknown>,
 ) {
 	let inserted = 0;
 	for (let index = 0; index < input.events.length; index += 30) {
+		const rows = input.events.slice(index, index + 30).map((event) => ({
+			...event,
+			labels: JSON.stringify([...new Set(event.labels ?? [])]),
+		}));
 		inserted += (
 			await db
 				.insert(submissionEvents)
-				.values(input.events.slice(index, index + 30))
+				.values(rows)
 				.onConflictDoNothing({ target: submissionEvents.issueNumber })
 				.returning({ issueNumber: submissionEvents.issueNumber })
 				.all()
@@ -68,11 +80,24 @@ export async function ingestSubmissions(
 }
 
 export async function submissionStatsResponse(db: DrizzleDb, nowIso = new Date().toISOString()) {
-	const [events, syncedAt] = await Promise.all([
+	const [rows, syncedAt] = await Promise.all([
 		db.select().from(submissionEvents).orderBy(asc(submissionEvents.occurredAt)).all(),
 		readSubmissionCursor(db),
 	]);
+	const events: SubmissionEvent[] = rows.map(({ labels, ...event }) => ({
+		...event,
+		labels: parseLabels(labels),
+	}));
 	return Response.json(submissionStats(events, nowIso, syncedAt));
+}
+
+function parseLabels(value: string | null | undefined) {
+	try {
+		const labels = JSON.parse(value ?? "[]");
+		return Array.isArray(labels) && labels.every((label) => typeof label === "string") ? labels : [];
+	} catch {
+		return [];
+	}
 }
 
 function hourStart(timestamp: number) {
@@ -171,6 +196,7 @@ export function submissionStats(
 	const hourlyTotals: Record<SubmissionKind, number> = { plugin: 0, verification: 0 };
 	const dailyTotals: Record<SubmissionKind, number> = { plugin: 0, verification: 0 };
 	const totals: Record<SubmissionKind, number> = { plugin: 0, verification: 0 };
+	const verificationTags = new Map<string, number>();
 	const hourPeaks: Record<SubmissionKind, Map<string, number>> = {
 		plugin: new Map(),
 		verification: new Map(),
@@ -185,6 +211,9 @@ export function submissionStats(
 		const hour = new Date(hourStart(timestamp)).toISOString();
 		const day = new Date(dayStart(timestamp)).toISOString().slice(0, 10);
 		totals[event.kind]++;
+		if (event.kind === "verification") {
+			for (const label of event.labels ?? []) verificationTags.set(label, (verificationTags.get(label) ?? 0) + 1);
+		}
 		hourPeaks[event.kind].set(hour, (hourPeaks[event.kind].get(hour) ?? 0) + 1);
 		dayPeaks[event.kind].set(day, (dayPeaks[event.kind].get(day) ?? 0) + 1);
 		if (timestamp > now) continue;
@@ -221,6 +250,9 @@ export function submissionStats(
 				{ total: totals[kind], peakHour: peak(hourPeaks[kind]), peakDay: peak(dayPeaks[kind]) },
 			]),
 		) as SubmissionStatsResponse["allTime"],
+		verificationTags: [...verificationTags]
+			.map(([label, count]): SubmissionTag => ({ label, count }))
+			.sort((left, right) => right.count - left.count || left.label.localeCompare(right.label)),
 		syncedAt,
 	};
 }

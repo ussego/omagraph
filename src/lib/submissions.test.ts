@@ -18,7 +18,8 @@ function testDb() {
 	db.run(sql`CREATE TABLE submission_events (
 		issue_number INTEGER PRIMARY KEY,
 		kind TEXT NOT NULL,
-		occurred_at TEXT NOT NULL
+		occurred_at TEXT NOT NULL,
+		labels TEXT NOT NULL DEFAULT '[]'
 	)`);
 	return db;
 }
@@ -32,7 +33,12 @@ describe("submissionStats", () => {
 				{ issueNumber: 3, kind: "verification", occurredAt: "2026-09-07T13:00:00.000Z" },
 				{ issueNumber: 4, kind: "plugin", occurredAt: "2026-09-08T11:00:00.000Z" },
 				{ issueNumber: 5, kind: "plugin", occurredAt: "2026-09-08T12:00:00.000Z" },
-				{ issueNumber: 6, kind: "verification", occurredAt: "2026-09-08T12:15:00.000Z" },
+				{
+					issueNumber: 6,
+					kind: "verification",
+					occurredAt: "2026-09-08T12:15:00.000Z",
+					labels: ["needs-fixes"],
+				},
 			],
 			"2026-09-08T12:34:56.000Z",
 			"2026-09-08T12:30:00.000Z",
@@ -69,6 +75,7 @@ describe("submissionStats", () => {
 			peakHour: { bucket: "2026-09-07T13:00:00.000Z", count: 1 },
 			peakDay: { bucket: "2026-09-07", count: 1 },
 		});
+		expect(stats.verificationTags).toEqual([{ label: "needs-fixes", count: 1 }]);
 	});
 
 	it("uses inclusive starts and excludes events after the current instant", () => {
@@ -183,6 +190,7 @@ describe("submission stats response", () => {
 			hourly: { points: expect.any(Array), plugin: { total: 1 }, verification: { total: 0 } },
 			daily: { points: expect.any(Array), plugin: { total: 1 }, verification: { total: 0 } },
 			allTime: { plugin: { total: 1 }, verification: { total: 0 } },
+			verificationTags: [],
 			syncedAt: "2026-09-08T12:30:00.000Z",
 		});
 	});

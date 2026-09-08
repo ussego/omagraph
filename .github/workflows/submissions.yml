@@ -42,9 +42,9 @@ jobs:
             [ .[][]
               | select(has("pull_request") | not)
               | if (.title | startswith("[Plugin]:")) then
-                  { issueNumber: .number, kind: "plugin", occurredAt: .created_at }
+                  { issueNumber: .number, kind: "plugin", occurredAt: .created_at, labels: [.labels[]?.name] }
                 elif (.title | startswith("[Verify]:")) then
-                  { issueNumber: .number, kind: "verification", occurredAt: .created_at }
+                  { issueNumber: .number, kind: "verification", occurredAt: .created_at, labels: [.labels[]?.name] }
                 else empty end
             ]
             | [range(0; length; 500) as $start | .[$start:$start + 500]][]

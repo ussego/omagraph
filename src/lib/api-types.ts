@@ -219,6 +219,8 @@ export type SubmissionWindow = {
 	verification: SubmissionWindowKind;
 };
 
+export type SubmissionTag = { label: string; count: number };
+
 export type SubmissionStatsResponse = {
 	hourly: SubmissionWindow;
 	daily: SubmissionWindow;
@@ -230,6 +232,7 @@ export type SubmissionStatsResponse = {
 			peakDay: { bucket: string; count: number } | null;
 		}
 	>;
+	verificationTags: SubmissionTag[];
 	syncedAt: string | null;
 };
 

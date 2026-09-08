@@ -26,6 +26,7 @@ describe("submission health view", () => {
 				plugin: { total: 0, peakHour: null, peakDay: null },
 				verification: { total: 0, peakHour: null, peakDay: null },
 			},
+			verificationTags: [],
 			syncedAt: null,
 		};
 		expect(submissionWindow(stats, "hour")).toBe(hourly);

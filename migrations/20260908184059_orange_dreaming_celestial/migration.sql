@@ -1,0 +1,1 @@
+ALTER TABLE `submission_events` ADD `labels` text DEFAULT '[]' NOT NULL;

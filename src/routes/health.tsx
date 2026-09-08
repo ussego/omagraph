@@ -77,7 +77,15 @@ export const Route = createFileRoute("/health")({
 	component: HealthPage,
 });
 
-function StatusChart({ title, rows }: { title: string; rows: { status: string | null; count: number }[] | undefined }) {
+function StatusChart({
+	title,
+	rows,
+	tags,
+}: {
+	title: string;
+	rows: { status: string | null; count: number }[] | undefined;
+	tags?: { label: string; count: number }[];
+}) {
 	const items = useMemo(
 		() =>
 			(rows ?? [])
@@ -90,7 +98,7 @@ function StatusChart({ title, rows }: { title: string; rows: { status: string | 
 		[rows],
 	);
 	if (items.length > 0) {
-		return <GraphRank title={title} items={items} className="w-full" />;
+		return <GraphRank title={title} items={items} tags={tags} className="w-full" />;
 	}
 	return (
 		<Empty>
@@ -230,7 +238,11 @@ function HealthPage() {
 
 			<div className="flex flex-col gap-12">
 				<StatusChart title="INSTALL AVAILABILITY" rows={breakdown.installStatus} />
-				<StatusChart title="VERIFICATION STATUS" rows={breakdown.verification} />
+				<StatusChart
+					title="VERIFICATION STATUS"
+					rows={breakdown.verification}
+					tags={submissions.verificationTags}
+				/>
 				<SubmissionLoad
 					period={submissionPeriod}
 					stats={submissions}
