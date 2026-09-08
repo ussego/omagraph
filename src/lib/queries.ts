@@ -173,7 +173,8 @@ export function submissionStatsQuery() {
 		queryKey: ["submission-stats"],
 		queryFn: () => get<SubmissionStatsResponse>("/api/stats/submissions"),
 		staleTime: 30_000,
-		refetchInterval: 60_000,
+		refetchInterval: ({ state: { data } }) =>
+			data?.allTime.plugin.total === 0 && data.allTime.verification.total === 0 ? 5_000 : 60_000,
 		refetchIntervalInBackground: false,
 		refetchOnWindowFocus: true,
 		placeholderData: keepPreviousData,

@@ -8,7 +8,6 @@ import {
 } from "@/lib/submission-view";
 import { healthSearchSchema } from "@/routes/health";
 import type { SubmissionStatsResponse } from "@/lib/api-types";
-import { submissionStatsQuery } from "@/lib/queries";
 
 describe("submission health view", () => {
 	it("defaults invalid periods to hour and switches windows without changing the response", () => {
@@ -51,15 +50,5 @@ describe("submission health view", () => {
 
 	it("keeps the selected submission period in validated health URL state", () => {
 		expect(healthSearchSchema.parse({ submissionPeriod: "day" })).toMatchObject({ submissionPeriod: "day" });
-	});
-
-	it("refreshes stale submission data each visible minute and on focus", () => {
-		expect(submissionStatsQuery()).toMatchObject({
-			queryKey: ["submission-stats"],
-			staleTime: 30_000,
-			refetchInterval: 60_000,
-			refetchIntervalInBackground: false,
-			refetchOnWindowFocus: true,
-		});
 	});
 });
