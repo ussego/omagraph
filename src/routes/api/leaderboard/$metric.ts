@@ -25,11 +25,12 @@ export const Route = createFileRoute("/api/leaderboard/$metric")({
 				const q = new URL(request.url).searchParams;
 				const limit = Math.min(100, parseInt(q.get("limit") ?? "50", 10) || 50);
 				const sparkPoints = Math.min(30, Math.max(0, parseInt(q.get("sparkPoints") ?? "0", 10) || 0));
+				// ponytail: fixed k=100 prior views with the live catalog mean as prior; raise k if tiny samples still top.
 				const score =
 					metric === "copies_per_view"
 						? sql<
 								number | null
-							>`cast(${plugins.currentCopies} as real) / nullif(${plugins.currentViews}, 0)`
+							>`case when coalesce(${plugins.currentViews}, 0) > 0 then (cast(coalesce(${plugins.currentCopies}, 0) as real) + 100 * (select cast(sum(coalesce(${plugins.currentCopies}, 0)) as real) / nullif(sum(coalesce(${plugins.currentViews}, 0)), 0) from ${plugins} where ${plugins.currentSnapshotAt} is not null)) / (coalesce(${plugins.currentViews}, 0) + 100) end`
 						: METRICS[metric as keyof typeof METRICS];
 				const rows = await db
 					.select({
