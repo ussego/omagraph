@@ -2,7 +2,7 @@
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, stripSearchParams, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { z } from "zod";
 import { BrokenPluginsTable } from "@/components/broken-plugins-table";
 import { Graph, GraphBody, type GraphTone } from "@/components/graph-frame/graph-frame";
@@ -236,9 +236,17 @@ function SubmissionLoad({
 		return () => window.clearInterval(interval);
 	}, []);
 	const sync = submissionSyncPresentation(stats.syncedAt, now);
+	// An empty response (stale edge entry, sync gap) must never blank panels
+	// that already showed data: latch the last non-empty stats and render
+	// those, while the badge keeps reporting live freshness.
+	const lastGood = useRef<SubmissionStatsResponse | null>(null);
+	if (stats.allTime.plugin.total + stats.allTime.verification.total > 0) {
+		lastGood.current = stats;
+	}
+	const visible = lastGood.current;
 
 	return (
-		<div className="flex flex-col gap-4">
+ 		<div className="flex flex-col gap-4">
 			<div className="flex flex-col gap-3">
 				<div className="flex flex-col gap-1">
 					<h2 className="font-heading text-xl">Submission load</h2>
@@ -263,7 +271,13 @@ function SubmissionLoad({
 					</Badge>
 				</div>
 			</div>
-			{stats.syncedAt == null ? (
+			{visible ? (
+			<div className="flex flex-col gap-8">
+				<SubmissionKindCharts kind="plugin" label="Plugin submissions" period={period} stats={visible} tone="accent" />
+				<SubmissionKindCharts kind="verification" label="Verification requests" period={period} stats={visible} tone="secondary" />
+				<VerificationIssueLabels tags={visible.verificationTags} />
+			</div>
+			) : (
 				<Graph title="SYNC PENDING" className="w-full">
 					<GraphBody>
 						<p className="font-mono text-graph-muted text-sm uppercase">
@@ -271,12 +285,6 @@ function SubmissionLoad({
 						</p>
 					</GraphBody>
 				</Graph>
-			) : (
-			<div className="flex flex-col gap-8">
-				<SubmissionKindCharts kind="plugin" label="Plugin submissions" period={period} stats={stats} tone="accent" />
-				<SubmissionKindCharts kind="verification" label="Verification requests" period={period} stats={stats} tone="secondary" />
-				<VerificationIssueLabels tags={stats.verificationTags} />
-			</div>
 			)}
 		</div>
 	);
