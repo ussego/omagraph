@@ -234,19 +234,17 @@ function SubmissionLoad({
 		const interval = window.setInterval(() => setNow(Date.now()), 60_000);
 		return () => window.clearInterval(interval);
 	}, []);
-	// An empty response (stale edge entry, sync gap) must never blank panels
-	// that already showed data: latch the last non-empty stats and render
-	// those. Freshness also reads the latch, so the badge reports the last
-	// known sync instead of flipping to pending on one empty refetch.
-	const lastGood = useRef<SubmissionStatsResponse | null>(null);
+	// Preserve known counts across empty refetches. On the first empty
+	// response, render zero-series charts rather than removing the panels.
+	const lastGood = useRef(stats);
 	if (stats.allTime.plugin.total + stats.allTime.verification.total > 0) {
 		lastGood.current = stats;
 	}
 	const visible = lastGood.current;
-	const sync = submissionSyncPresentation(visible?.syncedAt ?? null, now);
+	const sync = submissionSyncPresentation(visible.syncedAt, now);
 
 	return (
- 		<div className="flex flex-col gap-4">
+		<div className="flex flex-col gap-4">
 			<div className="flex flex-col gap-3">
 				<div className="flex flex-col gap-1">
 					<h2 className="font-heading text-xl">Submission load</h2>
@@ -271,21 +269,23 @@ function SubmissionLoad({
 					</Badge>
 				</div>
 			</div>
-			{visible ? (
 			<div className="flex flex-col gap-8">
-				<SubmissionKindCharts kind="plugin" label="Plugin submissions" period={period} stats={visible} tone="accent" />
-				<SubmissionKindCharts kind="verification" label="Verification requests" period={period} stats={visible} tone="secondary" />
+				<SubmissionKindCharts
+					kind="plugin"
+					label="Plugin submissions"
+					period={period}
+					stats={visible}
+					tone="accent"
+				/>
+				<SubmissionKindCharts
+					kind="verification"
+					label="Verification requests"
+					period={period}
+					stats={visible}
+					tone="secondary"
+				/>
 				<VerificationIssueLabels tags={visible.verificationTags} />
 			</div>
-			) : (
-				<Graph title="SYNC PENDING" className="w-full">
-					<GraphBody>
-						<p className="font-mono text-graph-muted text-sm uppercase">
-							Waiting for the first submission sync — counts appear here once it lands.
-						</p>
-					</GraphBody>
-				</Graph>
-			)}
 		</div>
 	);
 }

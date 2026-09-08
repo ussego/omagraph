@@ -52,9 +52,9 @@ async function apiRun<T>(next: () => Promise<T>): Promise<Response | T> {
  * (and the pages hydrated from it) to pre-sync data for hours.
  */
 const CACHE_TTL: [prefix: string, sMaxage: number, maxAge: number][] = [
-	// Submissions land every 5 minutes, so a 60s edge TTL surfaces each
-	// sync within a minute; the Cache API underneath still absorbs D1 reads.
-	["/api/stats/submissions", 60, 60],
+	// Keep the edge TTL at 60s, but force browsers to revalidate so React
+	// Query's refreshes reach the edge instead of replaying a four-hour HIT.
+	["/api/stats/submissions", 60, 0],
 	["/api/leaderboard/trending", 28800, 300],
 ];
 
@@ -70,7 +70,7 @@ const edgeCache = createMiddleware().server(async ({ next, request }) => {
 		return apiRun(() => Promise.resolve(next()));
 	}
 
-	if (url.pathname.startsWith("/api/health")) {
+	if (url.pathname === "/api/health") {
 		const result = await apiRun(() => Promise.resolve(next()));
 		const response = result instanceof Response ? result : result.response;
 		const headers = new Headers(response.headers);
@@ -78,20 +78,22 @@ const edgeCache = createMiddleware().server(async ({ next, request }) => {
 		return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 	}
 
+	const [, sMaxage = 3600, maxAge = 300] = CACHE_TTL.find(([prefix]) => url.pathname.startsWith(prefix)) ?? [];
+	const cacheControl = `public, max-age=${maxAge}, s-maxage=${sMaxage}`;
+
 	const cache = (globalThis.caches as unknown as { default: Cache }).default;
 	const hit = await cache.match(url);
 	if (hit) {
 		const headers = new Headers(hit.headers);
 		headers.set("x-cache", "HIT");
+		headers.set("Cache-Control", cacheControl);
 		return new Response(hit.body, { status: hit.status, statusText: hit.statusText, headers });
 	}
 
 	const result = await apiRun(() => Promise.resolve(next()));
 	const response = result instanceof Response ? result : result.response;
 	const headers = new Headers(response.headers);
-	const [, sMaxage = 3600, maxAge = 300] =
-		CACHE_TTL.find(([prefix]) => url.pathname.startsWith(prefix)) ?? [];
-	headers.set("Cache-Control", `public, max-age=${maxAge}, s-maxage=${sMaxage}`);
+	headers.set("Cache-Control", cacheControl);
 	headers.set("x-cache", "MISS");
 	const output = new Response(response.clone().body, {
 		status: response.status,
