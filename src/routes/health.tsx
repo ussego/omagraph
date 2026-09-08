@@ -127,9 +127,7 @@ function SubmissionKindCharts({
 			<GraphPlot
 				title={`${label.toUpperCase()} · ${periodLabel.toUpperCase()}`}
 				data={window.points.map((point) => point[kind])}
-				labels={window.points.map((point) =>
-					period === "hour" ? fmtDateTime(point.bucket) : fmtMonthDay(point.bucket),
-				)}
+				labels={window.points.map((point) => fmtMonthDay(point.bucket))}
 				className="w-full"
 			/>
 			<GraphStat
