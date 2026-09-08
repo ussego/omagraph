@@ -1,8 +1,10 @@
 name: Submission sync
 
 on:
-    schedule:
-        - cron: "*/5 * * * *"
+    # Trigger.dev owns the five-minute production schedule. Keep this commented
+    # so workflow_dispatch remains a manually runnable fallback.
+    # schedule:
+    #     - cron: "1/5 * * * *"
     workflow_dispatch:
 
 permissions:
@@ -29,10 +31,9 @@ jobs:
                     -H "x-admin-token: $ADMIN_TOKEN" "$admin_url" | jq -r '.cursor // empty')"
                   next_cursor="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
                   endpoint="repos/omacom/omarchy-plugin-marketplace/issues?state=all&sort=updated&direction=asc&per_page=100"
-                  if [[ -n "$cursor" ]]; then
-                    since="$(date -u -d "$cursor - 1 second" +"%Y-%m-%dT%H:%M:%SZ")"
-                    endpoint="$endpoint&since=$(jq -rn --arg value "$since" '$value | @uri')"
-                  fi
+                  cursor="${cursor:-$next_cursor}"
+                  since="$(date -u -d "$cursor - 1 second" +"%Y-%m-%dT%H:%M:%SZ")"
+                  endpoint="$endpoint&since=$(jq -rn --arg value "$since" '$value | @uri')"
 
                   issues_file="$(mktemp)"
                   trap 'rm -f "$issues_file"' EXIT

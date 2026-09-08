@@ -63,10 +63,12 @@ Pushes to `main` run typecheck, lint, and tests, then deploy through
 `.github/workflows/deploy.yml`; `bun run deploy` deploys manually. The Worker
 is named `omagraph`.
 
-Submission analytics require a read-only `MARKETPLACE_GITHUB_TOKEN` GitHub
-Actions secret. Roll out in this order: provision that secret, apply the
-additive D1 migration, deploy, manually run `Submission sync` once for the
-historical backfill, verify `/health`, then confirm its five-minute schedule.
+Submission analytics run every five minutes on Trigger.dev's micro machine.
+`ADMIN_TOKEN` and the read-only `MARKETPLACE_GITHUB_TOKEN` are secret
+environment variables in Trigger.dev production. Each run reads the stored
+cursor before querying GitHub, and a missing cursor is initialized without a
+historical backfill. `.github/workflows/submissions.yml` remains available via
+`workflow_dispatch` as a manual fallback.
 The public `/api/stats/submissions` response contains both 24-hour and 30-day
 windows, caches for 10 minutes, and is purged only when ingestion inserts a new
 event. `/health` refreshes it every minute while visible, warns when the last

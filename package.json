@@ -22,6 +22,8 @@
     "db:migrate:local": "wrangler d1 migrations apply omastats --local",
     "db:migrate:remote": "wrangler d1 migrations apply omastats --remote",
     "assets": "bun scripts/assets.tsx",
+    "trigger:dev": "trigger dev",
+    "trigger:deploy": "trigger deploy",
     "test": "bun test"
   },
   "dependencies": {
@@ -38,6 +40,7 @@
     "@tanstack/react-router-devtools": "latest",
     "@tanstack/react-router-ssr-query": "latest",
     "@tanstack/react-start": "latest",
+    "@trigger.dev/sdk": "^4.5.16",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.2.4",
     "drizzle-orm": "^1.0.0-rc.4",
@@ -57,6 +60,7 @@
     "@tanstack/devtools-vite": "latest",
     "@tanstack/router-cli": "^1.132.0",
     "@tanstack/router-plugin": "^1.168.35",
+    "@trigger.dev/build": "^4.5.16",
     "@types/node": "^26.4.1",
     "@types/pngjs": "^6.0.5",
     "@types/react": "^19.2.0",
@@ -66,6 +70,7 @@
     "drizzle-kit": "^1.0.0-rc.4",
     "pngjs": "^7.0.0",
     "takumi-js": "^2.13.5",
+    "trigger.dev": "^4.5.16",
     "typescript": "^7.0.2",
     "vite": "^8.0.0",
     "wrangler": "^4.128.0"

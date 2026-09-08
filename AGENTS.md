@@ -76,12 +76,15 @@ the environment truth for scripts, bindings, and deployment identity.
    the previous day's rows survive. The upstream regenerates the payload per
    request, so this poll must stay at one run per day. Built-in Plugins are
    out of scope and never get a `plugin_relations` row.
-4. **Submission Sync** (`.github/workflows/submissions.yml`): every five
-   minutes, GitHub Actions reads non-PR marketplace issues titled `[Plugin]:`
-   or `[Verify]:`, then posts their issue number, kind, and `created_at` to the
+4. **Submission Sync** (`submissionSync`, `src/trigger/submissions.ts`):
+   Trigger.dev runs it every five minutes on the micro machine. Each run reads
+   `meta.submission_sync_cursor`, queries only marketplace issues updated since
+   that cursor, and posts non-PR `[Plugin]:`/`[Verify]:` issues to the existing
    authenticated submissions endpoint. `submission_events.issue_number` makes
-   retries idempotent, while `meta.submission_sync_cursor` advances only after
-   successful ingestion. No cursor triggers the full historical backfill.
+   retries idempotent; the cursor advances only after successful ingestion. A
+   missing cursor is initialized to the scheduled timestamp without a
+   historical backfill. `.github/workflows/submissions.yml` keeps
+   `workflow_dispatch` as a manual fallback with its schedule commented out.
 5. **API**: Each endpoint is a file-based TanStack Start Server Route under
    `src/routes/api/`. Route handlers read Cloudflare bindings through
    `cloudflare:workers`, return the established JSON wire shapes, and use the
@@ -195,3 +198,9 @@ Color themes (the header picker) are a generated, committed CSS layer:
 `src/themes/themes.css` + `src/themes/themes.ts`. Run it after system theme
 or `src/styles.css` token changes; never hand-edit `src/themes/**` (excluded
 from Biome). See the "Color themes" section in `docs/design.md`.
+
+<!-- TRIGGER.DEV SKILLS START -->
+## Trigger.dev agent skills
+
+This project has Trigger.dev agent skills installed in `.agents/skills/`. Before writing or changing Trigger.dev code (background tasks, scheduled tasks, realtime, or chat.agent AI agents), load the most relevant skill: `trigger-authoring-chat-agent`, `trigger-authoring-tasks`, `trigger-chat-agent-advanced`, `trigger-cost-savings`, `trigger-getting-started`, `trigger-realtime-and-frontend`.
+<!-- TRIGGER.DEV SKILLS END -->
