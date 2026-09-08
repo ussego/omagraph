@@ -234,7 +234,9 @@ function HealthPage() {
 				<SubmissionLoad
 					period={submissionPeriod}
 					stats={submissions}
-					onPeriodChange={(period) => navigate({ search: (prev) => ({ ...prev, submissionPeriod: period }) })}
+					onPeriodChange={(period) =>
+						navigate({ resetScroll: false, search: (prev) => ({ ...prev, submissionPeriod: period }) })
+					}
 				/>
 			</div>
 
