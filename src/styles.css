@@ -27,6 +27,15 @@
 	--color-input: var(--input);
 	--color-border: var(--border);
 	--color-destructive: var(--destructive);
+	--color-destructive-foreground: var(--destructive-foreground);
+	--color-success: var(--success);
+	--color-success-foreground: var(--success-foreground);
+	--color-warning: var(--warning);
+	--color-warning-foreground: var(--warning-foreground);
+	--color-error: var(--error);
+	--color-error-foreground: var(--error-foreground);
+	--color-info: var(--info);
+	--color-info-foreground: var(--info-foreground);
 	--color-accent-foreground: var(--accent-foreground);
 	--color-accent: var(--accent);
 	--color-muted-foreground: var(--muted-foreground);
@@ -80,6 +89,17 @@
 	--accent: oklch(0.967 0.001 286.375);
 	--accent-foreground: oklch(0.21 0.006 285.885);
 	--destructive: oklch(0.577 0.245 27.325);
+	/* Soft-badge tokens alias the graph status palette, so the matching
+	   Badge variants track light/dark mode and every color theme. */
+	--success: var(--graph-positive);
+	--success-foreground: var(--graph-positive);
+	--warning: var(--graph-warning);
+	--warning-foreground: var(--graph-warning);
+	--error: var(--graph-negative);
+	--error-foreground: var(--graph-negative);
+	--info: var(--graph-accent);
+	--info-foreground: var(--graph-accent);
+	--destructive-foreground: var(--graph-negative);
 	--border: oklch(0.92 0.004 286.32);
 	--input: oklch(0.92 0.004 286.32);
 	--ring: oklch(0.705 0.015 286.067);

@@ -18,6 +18,9 @@ hue for a fixed data role. Follow this document for any UI change; extend it whe
   terminal palette; the header's color-theme picker replaces it with the chosen Omarchy palette.
 - **Frame inks**: `--graph-frame` (charts and controls), `--graph-frame-soft` (page frame, roughly
   half the contrast), `--graph-muted`, `--graph-faint`.
+- **Soft badges**: `--success`/`--warning`/`--error`/`--info` (plus `-foreground`, plus
+  `--destructive-foreground`) alias the graph status palette, so the matching `Badge`
+  variants re-theme with every palette.
 - Components use tokens only (`bg-background`, `text-graph-accent`, …). No raw color values
   (except `src/themes/themes.ts`, the generated swatch metadata).
 
