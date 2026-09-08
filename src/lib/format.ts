@@ -39,17 +39,30 @@ export const fmtDateTime = (iso: string | null | undefined): string =>
 		: "—";
 
 /** "7d ago"-style relative label for the last snapshot time. */
-export const fmtRelative = (iso: string | null | undefined, now = Date.now()): string => {
+export const fmtRelative = (iso: string | null | undefined): string => {
 	if (!iso) return "never";
-	const ms = now - new Date(iso).getTime();
-	const m = Math.floor(ms / 60_000);
-	if (m < 1) return "just now";
+	const ms = Date.now() - new Date(iso).getTime();
 	const h = Math.floor(ms / 3_600_000);
-	if (h < 1) return `${m}m ago`;
+	if (h < 1) return "just now";
 	if (h < 24) return `${h}h ago`;
 	const d = Math.floor(h / 24);
 	if (d < 30) return `${d}d ago`;
 	const months = Math.floor(d / 30);
 	if (months < 12) return `${months}mo ago`;
-	return `${Math.floor(m / 12)}y ago`;
+	return `${Math.floor(months / 12)}y ago`;
+};
+
+export const fmtRelativeLong = (iso: string | null | undefined, now = Date.now()): string => {
+	if (!iso) return "never";
+	const minutes = Math.max(0, Math.floor((now - new Date(iso).getTime()) / 60_000));
+	if (minutes < 1) return "just now";
+	if (minutes < 60) return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
+	const hours = Math.floor(minutes / 60);
+	if (hours < 24) return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+	const days = Math.floor(hours / 24);
+	if (days < 30) return `${days} day${days === 1 ? "" : "s"} ago`;
+	const months = Math.floor(days / 30);
+	if (months < 12) return `${months} month${months === 1 ? "" : "s"} ago`;
+	const years = Math.floor(months / 12);
+	return `${years} year${years === 1 ? "" : "s"} ago`;
 };
