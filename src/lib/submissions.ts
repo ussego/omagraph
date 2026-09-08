@@ -60,9 +60,19 @@ export async function ingestSubmissions(
 			await db
 				.insert(submissionEvents)
 				.values(rows)
-				.onConflictDoNothing({ target: submissionEvents.issueNumber })
+				.onConflictDoUpdate({
+					target: submissionEvents.issueNumber,
+					set: {
+						kind: sql`excluded.kind`,
+						occurredAt: sql`excluded.occurred_at`,
+						labels: sql`excluded.labels`,
+					},
+					// Labels land after triage, so refresh the row when a
+					// re-sync carries anything new; untouched rows stay put
+					// and identical retries still report zero writes.
+					where: sql`${submissionEvents.kind} != excluded.kind OR ${submissionEvents.occurredAt} != excluded.occurred_at OR ${submissionEvents.labels} != excluded.labels`,
+				})
 				.returning({ issueNumber: submissionEvents.issueNumber })
-				.all()
 		).length;
 	}
 	if (input.cursor) {
@@ -211,9 +221,7 @@ export function submissionStats(
 		const hour = new Date(hourStart(timestamp)).toISOString();
 		const day = new Date(dayStart(timestamp)).toISOString().slice(0, 10);
 		totals[event.kind]++;
-		if (event.kind === "verification") {
-			for (const label of event.labels ?? []) verificationTags.set(label, (verificationTags.get(label) ?? 0) + 1);
-		}
+		for (const label of event.labels ?? []) verificationTags.set(label, (verificationTags.get(label) ?? 0) + 1);
 		hourPeaks[event.kind].set(hour, (hourPeaks[event.kind].get(hour) ?? 0) + 1);
 		dayPeaks[event.kind].set(day, (dayPeaks[event.kind].get(day) ?? 0) + 1);
 		if (timestamp > now) continue;

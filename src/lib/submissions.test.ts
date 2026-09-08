@@ -28,7 +28,7 @@ describe("submissionStats", () => {
 	it("zero-fills UTC windows and keeps kinds, totals, peaks, and gaps separate", () => {
 		const stats = submissionStats(
 			[
-				{ issueNumber: 1, kind: "plugin", occurredAt: "2026-08-01T10:05:00.000Z" },
+				{ issueNumber: 1, kind: "plugin", occurredAt: "2026-08-01T10:05:00.000Z", labels: ["submission"] },
 				{ issueNumber: 2, kind: "plugin", occurredAt: "2026-08-01T10:35:00.000Z" },
 				{ issueNumber: 3, kind: "verification", occurredAt: "2026-09-07T13:00:00.000Z" },
 				{ issueNumber: 4, kind: "plugin", occurredAt: "2026-09-08T11:00:00.000Z" },
@@ -75,7 +75,10 @@ describe("submissionStats", () => {
 			peakHour: { bucket: "2026-09-07T13:00:00.000Z", count: 1 },
 			peakDay: { bucket: "2026-09-07", count: 1 },
 		});
-		expect(stats.verificationTags).toEqual([{ label: "needs-fixes", count: 1 }]);
+		expect(stats.verificationTags).toEqual([
+			{ label: "needs-fixes", count: 1 },
+			{ label: "submission", count: 1 },
+		]);
 	});
 
 	it("uses inclusive starts and excludes events after the current instant", () => {
@@ -153,6 +156,32 @@ describe("submission ingestion", () => {
 		});
 		expect(purges).toBe(1);
 		expect(await readSubmissionCursor(db)).toBe("2026-09-08T13:00:00.000Z");
+	});
+	it("refreshes labels when triage lands after the first sync", async () => {
+		const db = testDb();
+		let purges = 0;
+		const purge = async () => void purges++;
+		const base = {
+			issueNumber: 13,
+			kind: "verification" as const,
+			occurredAt: "2026-09-08T10:00:00.000Z",
+			labels: [] as string[],
+		};
+
+		expect(await ingestSubmissions(db, { events: [base] }, purge)).toEqual({ inserted: 1, cursor: null });
+		expect(purges).toBe(1);
+
+		expect(await ingestSubmissions(db, { events: [base] }, purge)).toEqual({ inserted: 0, cursor: null });
+		expect(purges).toBe(1);
+
+		expect(await ingestSubmissions(db, { events: [{ ...base, labels: ["needs-fixes"] }] }, purge)).toEqual({
+			inserted: 1,
+			cursor: null,
+		});
+		expect(purges).toBe(2);
+
+		const stats = await submissionStatsResponse(db, "2026-09-08T12:00:00.000Z");
+		expect(await stats.json()).toMatchObject({ verificationTags: [{ label: "needs-fixes", count: 1 }] });
 	});
 
 	it("ingests payloads across D1-safe statement chunks", async () => {
