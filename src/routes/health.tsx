@@ -123,7 +123,7 @@ function SubmissionKindCharts({
 	const periodLabel = period === "hour" ? "Hourly · 24h" : "Daily · 30d";
 
 	return (
-		<div className="grid gap-4 lg:grid-cols-2">
+		<div className="flex flex-col gap-4">
 			<GraphPlot
 				title={`${label.toUpperCase()} · ${periodLabel.toUpperCase()}`}
 				data={window.points.map((point) => point[kind])}
@@ -132,7 +132,6 @@ function SubmissionKindCharts({
 			/>
 			<GraphStat
 				title={label.toUpperCase()}
-				layout="stack"
 				items={[
 					{
 						value: fmt(current.total),

@@ -24,13 +24,12 @@ type StatItem = {
 type GraphStatProps = {
 	title: string;
 	items: StatItem[];
-	layout?: "grid" | "stack";
 	tone?: GraphTone;
 	corner?: string;
 	className?: string;
 };
 
-function GraphStat({ title, items, layout = "grid", tone, corner, className }: GraphStatProps) {
+function GraphStat({ title, items, tone, corner, className }: GraphStatProps) {
 	const reduce = useReducedMotion();
 	const item = fadeUp(reduce);
 	const list = staggerList(reduce, 0.06);
@@ -40,10 +39,7 @@ function GraphStat({ title, items, layout = "grid", tone, corner, className }: G
 		<Graph title={title} tone={tone} className={className} corner={corner}>
 			<GraphBody>
 				<motion.ul
-					className={cn(
-						layout === "stack" ? "flex flex-col gap-8" : "grid gap-8",
-						layout === "grid" && columnClass[columns],
-					)}
+					className={cn("grid gap-8", columnClass[columns])}
 					initial={reduce ? false : "hidden"}
 					role="list"
 					variants={list}
