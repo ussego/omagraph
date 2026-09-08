@@ -40,7 +40,11 @@ describe("submission health view", () => {
 		expect(submissionSyncPresentation(null, now)).toEqual({ stale: true, label: "Submission sync pending" });
 		expect(submissionSyncPresentation("2026-09-08T12:14:59.999Z", now)).toEqual({
 			stale: true,
-			label: "Stale · last synced Sep 8, 2026, 12:14 PM UTC",
+			label: "Stale · last synced 15m ago",
+		});
+		expect(submissionSyncPresentation("2026-09-08T12:27:00.000Z", now)).toEqual({
+			stale: false,
+			label: "Last synced 3m ago",
 		});
 	});
 

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import type { SubmissionStatsResponse } from "@/lib/api-types";
-import { fmtDateTime } from "@/lib/format";
+import { fmtRelative } from "@/lib/format";
 
 export const submissionPeriodSchema = z.enum(["hour", "day"]).default("hour").catch("hour");
 
@@ -18,6 +18,6 @@ export function submissionSyncPresentation(syncedAt: string | null, now = Date.n
 	if (!syncedAt) return { stale, label: "Submission sync pending" };
 	return {
 		stale,
-		label: `${stale ? "Stale · last synced" : "Last synced"} ${fmtDateTime(syncedAt)} UTC`,
+		label: `${stale ? "Stale · last synced" : "Last synced"} ${fmtRelative(syncedAt, now)}`,
 	};
 }

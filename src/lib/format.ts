@@ -39,15 +39,17 @@ export const fmtDateTime = (iso: string | null | undefined): string =>
 		: "—";
 
 /** "7d ago"-style relative label for the last snapshot time. */
-export const fmtRelative = (iso: string | null | undefined): string => {
+export const fmtRelative = (iso: string | null | undefined, now = Date.now()): string => {
 	if (!iso) return "never";
-	const ms = Date.now() - new Date(iso).getTime();
+	const ms = now - new Date(iso).getTime();
+	const m = Math.floor(ms / 60_000);
+	if (m < 1) return "just now";
 	const h = Math.floor(ms / 3_600_000);
-	if (h < 1) return "just now";
+	if (h < 1) return `${m}m ago`;
 	if (h < 24) return `${h}h ago`;
 	const d = Math.floor(h / 24);
 	if (d < 30) return `${d}d ago`;
-	const m = Math.floor(d / 30);
-	if (m < 12) return `${m}mo ago`;
+	const months = Math.floor(d / 30);
+	if (months < 12) return `${months}mo ago`;
 	return `${Math.floor(m / 12)}y ago`;
 };
