@@ -176,6 +176,7 @@ export function submissionStatsQuery() {
 		refetchInterval: 60_000,
 		refetchIntervalInBackground: false,
 		refetchOnWindowFocus: true,
+		placeholderData: keepPreviousData,
 	});
 }
 

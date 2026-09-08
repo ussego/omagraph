@@ -254,16 +254,30 @@ function SubmissionLoad({
 							<TabsTab value="day">Daily · 30d</TabsTab>
 						</TabsList>
 					</Tabs>
-					<Badge variant={sync.stale ? "warning" : "success"} className="rounded-none font-mono uppercase">
+					<Badge
+						variant={sync.stale ? "warning" : "success"}
+						className="rounded-none font-mono uppercase"
+						title={sync.stale ? "Counts may be outdated — refresh the page for the latest" : undefined}
+					>
 						{sync.label}
 					</Badge>
 				</div>
 			</div>
+			{stats.syncedAt == null ? (
+				<Graph title="SYNC PENDING" className="w-full">
+					<GraphBody>
+						<p className="font-mono text-graph-muted text-sm uppercase">
+							Waiting for the first submission sync — counts appear here once it lands.
+						</p>
+					</GraphBody>
+				</Graph>
+			) : (
 			<div className="flex flex-col gap-8">
 				<SubmissionKindCharts kind="plugin" label="Plugin submissions" period={period} stats={stats} tone="accent" />
 				<SubmissionKindCharts kind="verification" label="Verification requests" period={period} stats={stats} tone="secondary" />
 				<VerificationIssueLabels tags={stats.verificationTags} />
 			</div>
+			)}
 		</div>
 	);
 }
