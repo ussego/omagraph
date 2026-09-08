@@ -171,7 +171,12 @@ export function healthQuery() {
 export function submissionStatsQuery() {
 	return queryOptions({
 		queryKey: ["submission-stats"],
-		queryFn: () => get<SubmissionStatsResponse>("/api/stats/submissions"),
+		queryFn: async () => {
+			const stats = await get<SubmissionStatsResponse>("/api/stats/submissions");
+			return stats.syncedAt === null
+				? get<SubmissionStatsResponse>(`/api/stats/submissions?fresh=${Date.now()}`)
+				: stats;
+		},
 		staleTime: 30_000,
 		refetchInterval: ({ state: { data } }) =>
 			data?.allTime.plugin.total === 0 && data.allTime.verification.total === 0 ? 5_000 : 60_000,
