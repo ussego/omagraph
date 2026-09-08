@@ -4,12 +4,12 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, stripSearchParams, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
-import { Graph, GraphBody, type GraphTone } from "@/components/graph-frame/graph-frame";
 import { BrokenPluginsTable } from "@/components/broken-plugins-table";
+import { Graph, GraphBody, type GraphTone } from "@/components/graph-frame/graph-frame";
 import { GraphRule } from "@/components/graph-frame/graph-rule";
-import { GraphPlot } from "@/components/graph-plot";
+import { GraphPlotBody } from "@/components/graph-plot";
 import { GraphRank } from "@/components/graph-rank";
-import { GraphStat } from "@/components/graph-stat";
+import { GraphStatBody } from "@/components/graph-stat";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Empty, EmptyTitle } from "@/components/ui/empty";
@@ -77,13 +77,7 @@ export const Route = createFileRoute("/health")({
 	component: HealthPage,
 });
 
-function StatusChart({
-	title,
-	rows,
-}: {
-	title: string;
-	rows: { status: string | null; count: number }[] | undefined;
-}) {
+function StatusChart({ title, rows }: { title: string; rows: { status: string | null; count: number }[] | undefined }) {
 	const items = useMemo(
 		() =>
 			(rows ?? [])
@@ -105,28 +99,55 @@ function StatusChart({
 	);
 }
 
+const MARKETPLACE_ISSUES = "https://github.com/omacom/omarchy-plugin-marketplace/issues";
+function labelHref(label: string) {
+	return `${MARKETPLACE_ISSUES}?q=${encodeURIComponent(`is:issue label:"${label}"`)}`;
+}
+
+function tagBadgeVariant(label: string): "info" | "secondary" | "success" | "error" | "warning" {
+	const value = label.toLowerCase();
+	if (/fix|fail|invalid|reject|broken|error|stale|block|duplicate/.test(value)) return "error";
+	if (/secur|review|pending|wait|triage|check|manual/.test(value)) return "warning";
+	if (/(^|-)verified(-|$)|valid|approv|accept|merge|done|success|pass|complete|ship/.test(value)) return "success";
+	if (/submi|request|update|plugin/.test(value)) return "info";
+	return "secondary";
+}
+
 function VerificationIssueLabels({ tags }: { tags: SubmissionStatsResponse["verificationTags"] }) {
 	if (tags.length === 0) return null;
+	const ordered = [...tags].sort((left, right) => right.count - left.count || left.label.localeCompare(right.label));
 
 	return (
-		<Graph title="VERIFICATION ISSUE LABELS" className="w-full">
-			<GraphBody className="flex flex-col gap-3">
+		<Graph title="SUBMISSION ISSUE LABELS" className="w-full">
+			<GraphBody className="flex flex-col gap-4">
 				<p className="text-graph-muted text-sm">
-					Labels attached to received verification issues, including attempts that were not validated or published.
+					Labels attached to received plugin and verification issues, including attempts that were not
+					validated or published.
 				</p>
 				<div className="flex flex-wrap gap-2">
-					{tags.map((tag) => (
+					{ordered.map((tag) => (
 						<Badge
-							aria-label={`${tag.label}, ${fmt(tag.count)} received`}
-							key={tag.label}
-							size="sm"
-							variant="secondary"
+							aria-label={`${tag.label}, ${fmt(tag.count)} received — view on GitHub`}
 							className="rounded-none font-mono uppercase"
+							key={tag.label}
+							render={<a href={labelHref(tag.label)} rel="noreferrer" target="_blank" />}
+							size="sm"
+							variant={tagBadgeVariant(tag.label)}
 						>
-							{tag.label} <span className="text-graph-muted">· {fmt(tag.count)}</span>
+							{tag.label} <span className="opacity-80">· {fmt(tag.count)}</span>
+							<span aria-hidden="true">↗</span>
 						</Badge>
 					))}
 				</div>
+				<a
+					className="flex w-fit items-center gap-1.5 font-mono text-muted-foreground text-xs uppercase hover:text-graph-accent"
+					href={`${MARKETPLACE_ISSUES}?q=${encodeURIComponent("is:issue in:title [Verify]")}`}
+					rel="noreferrer"
+					target="_blank"
+				>
+					<span>Browse verification issues</span>
+					<span aria-hidden="true">↗</span>
+				</a>
 			</GraphBody>
 		</Graph>
 	);
@@ -144,11 +165,13 @@ function SubmissionKindCharts({
 	label,
 	period,
 	stats,
+	tone,
 }: {
 	kind: SubmissionKind;
 	label: string;
 	period: SubmissionPeriod;
 	stats: SubmissionStatsResponse;
+	tone: GraphTone;
 }) {
 	const window = submissionWindow(stats, period);
 	const current = window[kind];
@@ -156,44 +179,45 @@ function SubmissionKindCharts({
 	const periodLabel = period === "hour" ? "Hourly · 24h" : "Daily · 30d";
 
 	return (
-		<div className="flex flex-col gap-4">
-			<GraphPlot
-				title={`${label.toUpperCase()} · ${periodLabel.toUpperCase()}`}
-				data={window.points.map((point) => point[kind])}
-				labels={window.points.map((point) => fmtMonthDay(point.bucket))}
-				tooltipLabels={window.points.map((point) =>
-					period === "hour" ? `${fmtDateTime(point.bucket)} UTC` : `${fmtDate(point.bucket)} UTC`,
-				)}
-				className="w-full"
-			/>
-			<GraphStat
-				title={label.toUpperCase()}
-				items={[
-					{
-						value: fmt(current.total),
-						label: period === "hour" ? "received · 24h" : "received · 30d",
-						hint: `${fmt(allTime.total)} all time`,
-						tone: "accent",
-					},
-					{
-						value: fmt(allTime.peakHour?.count),
-						label: "all-time peak / hour",
-						hint: allTime.peakHour ? `${fmtDateTime(allTime.peakHour.bucket)} UTC` : "No events yet",
-					},
-					{
-						value: fmt(allTime.peakDay?.count),
-						label: "all-time peak / day",
-						hint: allTime.peakDay ? `${fmtDate(allTime.peakDay.bucket)} UTC` : "No events yet",
-					},
-					{
-						value: formatGap(current.medianGapMinutes),
-						label: "median arrival gap",
-						hint: `Average ${formatGap(current.averageGapMinutes)}`,
-					},
-				]}
-				className="w-full"
-			/>
-		</div>
+		<Graph title={`${label.toUpperCase()} · ${periodLabel.toUpperCase()}`} tone={tone} className="w-full">
+			<GraphBody className="flex flex-col gap-6">
+				<GraphPlotBody
+					data={window.points.map((point) => point[kind])}
+					labels={window.points.map((point) => fmtMonthDay(point.bucket))}
+					tooltipLabels={window.points.map((point) =>
+						period === "hour" ? `${fmtDateTime(point.bucket)} UTC` : `${fmtDate(point.bucket)} UTC`,
+					)}
+					palette="duo"
+					tone={tone}
+				/>
+				<GraphRule />
+				<GraphStatBody
+					items={[
+						{
+							value: fmt(current.total),
+							label: period === "hour" ? "received · 24h" : "received · 30d",
+							hint: `${fmt(allTime.total)} all time`,
+							tone,
+						},
+						{
+							value: fmt(allTime.peakHour?.count),
+							label: "all-time peak / hour",
+							hint: allTime.peakHour ? `${fmtDateTime(allTime.peakHour.bucket)} UTC` : "No events yet",
+						},
+						{
+							value: fmt(allTime.peakDay?.count),
+							label: "all-time peak / day",
+							hint: allTime.peakDay ? `${fmtDate(allTime.peakDay.bucket)} UTC` : "No events yet",
+						},
+						{
+							value: formatGap(current.medianGapMinutes),
+							label: "median arrival gap",
+							hint: `Average ${formatGap(current.averageGapMinutes)}`,
+						},
+					]}
+				/>
+			</GraphBody>
+		</Graph>
 	);
 }
 
@@ -215,7 +239,7 @@ function SubmissionLoad({
 
 	return (
 		<div className="flex flex-col gap-4">
-			<div className="flex flex-wrap items-center justify-between gap-3">
+			<div className="flex flex-col gap-3">
 				<div className="flex flex-col gap-1">
 					<h2 className="font-heading text-xl">Submission load</h2>
 					<p className="text-muted-foreground text-sm">
@@ -223,21 +247,22 @@ function SubmissionLoad({
 						validated or published.
 					</p>
 				</div>
-				<div className="flex flex-wrap items-center justify-end gap-2">
-					<Badge variant={sync.stale ? "warning" : "success"} className="rounded-none font-mono uppercase">
-						{sync.label}
-					</Badge>
+				<div className="flex flex-wrap items-center justify-between gap-2">
 					<Tabs value={period} onValueChange={(value) => onPeriodChange(value as SubmissionPeriod)}>
 						<TabsList>
 							<TabsTab value="hour">Hourly · 24h</TabsTab>
 							<TabsTab value="day">Daily · 30d</TabsTab>
 						</TabsList>
 					</Tabs>
+					<Badge variant={sync.stale ? "warning" : "success"} className="rounded-none font-mono uppercase">
+						{sync.label}
+					</Badge>
 				</div>
 			</div>
-			<div className="flex flex-col gap-6">
-				<SubmissionKindCharts kind="plugin" label="Plugin submissions" period={period} stats={stats} />
-				<SubmissionKindCharts kind="verification" label="Verification requests" period={period} stats={stats} />
+			<div className="flex flex-col gap-8">
+				<SubmissionKindCharts kind="plugin" label="Plugin submissions" period={period} stats={stats} tone="accent" />
+				<SubmissionKindCharts kind="verification" label="Verification requests" period={period} stats={stats} tone="secondary" />
+				<VerificationIssueLabels tags={stats.verificationTags} />
 			</div>
 		</div>
 	);
@@ -274,7 +299,6 @@ function HealthPage() {
 						navigate({ resetScroll: false, search: (prev) => ({ ...prev, submissionPeriod: period }) })
 					}
 				/>
-				<VerificationIssueLabels tags={submissions.verificationTags} />
 			</div>
 
 			<GraphRule />
