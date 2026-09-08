@@ -35,6 +35,15 @@ The thematic cluster label the Omarchy explorer assigns a Plugin (e.g. "AI & Aut
 **Verification Event**:
 A recorded change in a Plugin's verification status, produced by comparing consecutive Snapshots during a Heavy Poll.
 
+**Verification Request**:
+An attempt to request verification through a non-PR marketplace issue whose title starts `[Verify]:`. Recorded once at issue creation by the Submission Sync, regardless of later validation or outcome. This is received workload, not a Verification Event.
+
+**Submission Event**:
+A non-PR marketplace issue whose title starts `[Plugin]:` or `[Verify]:`, recorded once at `created_at` using the GitHub issue number as its idempotency key.
+
+**Submission Sync**:
+The five-minute GitHub Actions poll that imports Submission Events and advances a monotonic cursor. The first run backfills the full issue history; later runs fetch issues updated since the cursor.
+
 **Update Event**:
 A recorded change in a Plugin's upstream repository state (e.g. a new version), produced the same way as a Verification Event.
 

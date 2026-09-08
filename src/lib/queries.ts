@@ -1,5 +1,6 @@
 import { keepPreviousData, queryOptions, useQuery } from "@tanstack/react-query";
 
+import type { SubmissionStatsResponse } from "@/lib/api-types";
 import { apiFetch } from "./api-url";
 import type {
 	AuthorDetailResponse,
@@ -164,6 +165,17 @@ export function healthQuery() {
 	return queryOptions({
 		queryKey: ["health"],
 		queryFn: () => get<HealthResponse>("/api/health"),
+	});
+}
+
+export function submissionStatsQuery() {
+	return queryOptions({
+		queryKey: ["submission-stats"],
+		queryFn: () => get<SubmissionStatsResponse>("/api/stats/submissions"),
+		staleTime: 30_000,
+		refetchInterval: 60_000,
+		refetchIntervalInBackground: false,
+		refetchOnWindowFocus: true,
 	});
 }
 

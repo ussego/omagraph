@@ -2,12 +2,15 @@
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, stripSearchParams, useNavigate } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import type { GraphTone } from "@/components/graph-frame/graph-frame";
 import { BrokenPluginsTable } from "@/components/broken-plugins-table";
 import { GraphRule } from "@/components/graph-frame/graph-rule";
+import { GraphPlot } from "@/components/graph-plot";
 import { GraphRank } from "@/components/graph-rank";
+import { GraphStat } from "@/components/graph-stat";
+import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Empty, EmptyTitle } from "@/components/ui/empty";
 import {
@@ -20,15 +23,23 @@ import {
 import { Tabs, TabsList, TabsTab } from "@/components/ui/tabs";
 import { UnverifiedPluginsTable } from "@/components/unverified-plugins-table";
 
-import { breakdownQuery, brokenPluginsQuery, unverifiedPluginsQuery } from "@/lib/queries";
+import type { SubmissionKind, SubmissionStatsResponse } from "@/lib/api-types";
+import { fmt, fmtDate, fmtDateTime, fmtMonthDay } from "@/lib/format";
+import { breakdownQuery, brokenPluginsQuery, submissionStatsQuery, unverifiedPluginsQuery } from "@/lib/queries";
 import { pageHead } from "@/lib/site";
+import {
+	type SubmissionPeriod,
+	submissionPeriodSchema,
+	submissionSyncPresentation,
+	submissionWindow,
+} from "@/lib/submission-view";
 
 const RANGES = [
 	{ value: "7d", label: "7d" },
 	{ value: "14d", label: "14d" },
 	{ value: "30d", label: "1 month" },
 ] as const;
-const DEFAULTS = { range: "30d", page: 1 } as const;
+const DEFAULTS = { range: "30d", page: 1, submissionPeriod: "hour" } as const;
 const UNVERIFIED_PAGE_SIZE = 25;
 
 function statusTone(status: string | null): GraphTone {
@@ -40,9 +51,10 @@ function statusTone(status: string | null): GraphTone {
 
 // Zod v4 schema passed straight to validateSearch; `.catch` coerces garbage
 // to the default instead of erroring the route.
-const healthSearchSchema = z.object({
+export const healthSearchSchema = z.object({
 	range: z.enum(["7d", "14d", "30d"]).default(DEFAULTS.range).catch(DEFAULTS.range),
 	page: z.number().int().positive().default(DEFAULTS.page).catch(DEFAULTS.page),
+	submissionPeriod: submissionPeriodSchema,
 });
 
 export const Route = createFileRoute("/health")({
@@ -60,6 +72,7 @@ export const Route = createFileRoute("/health")({
 			queryClient.query({ ...breakdownQuery(), staleTime: "static" }),
 			queryClient.query({ ...brokenPluginsQuery(), staleTime: "static" }),
 			queryClient.query({ ...unverifiedPluginsQuery(deps.range), staleTime: "static" }),
+			queryClient.query({ ...submissionStatsQuery(), staleTime: "static" }),
 		]),
 	component: HealthPage,
 });
@@ -86,12 +99,123 @@ function StatusChart({ title, rows }: { title: string; rows: { status: string | 
 	);
 }
 
+function formatGap(minutes: number | null) {
+	if (minutes == null) return "—";
+	if (minutes < 60) return `${fmt(Math.round(minutes))}m`;
+	if (minutes < 1440) return `${(minutes / 60).toFixed(1)}h`;
+	return `${(minutes / 1440).toFixed(1)}d`;
+}
+
+function SubmissionKindCharts({
+	kind,
+	label,
+	period,
+	stats,
+}: {
+	kind: SubmissionKind;
+	label: string;
+	period: SubmissionPeriod;
+	stats: SubmissionStatsResponse;
+}) {
+	const window = submissionWindow(stats, period);
+	const current = window[kind];
+	const allTime = stats.allTime[kind];
+	const periodLabel = period === "hour" ? "Hourly · 24h" : "Daily · 30d";
+
+	return (
+		<div className="grid gap-4 lg:grid-cols-2">
+			<GraphPlot
+				title={`${label.toUpperCase()} · ${periodLabel.toUpperCase()}`}
+				data={window.points.map((point) => point[kind])}
+				labels={window.points.map((point) =>
+					period === "hour" ? fmtDateTime(point.bucket) : fmtMonthDay(point.bucket),
+				)}
+				className="w-full"
+			/>
+			<GraphStat
+				title={label.toUpperCase()}
+				items={[
+					{
+						value: fmt(current.total),
+						label: period === "hour" ? "received · 24h" : "received · 30d",
+						hint: `${fmt(allTime.total)} all time`,
+						tone: "accent",
+					},
+					{
+						value: fmt(allTime.peakHour?.count),
+						label: "all-time peak / hour",
+						hint: allTime.peakHour ? `${fmtDateTime(allTime.peakHour.bucket)} UTC` : "No events yet",
+					},
+					{
+						value: fmt(allTime.peakDay?.count),
+						label: "all-time peak / day",
+						hint: allTime.peakDay ? `${fmtDate(allTime.peakDay.bucket)} UTC` : "No events yet",
+					},
+					{
+						value: formatGap(current.medianGapMinutes),
+						label: "median arrival gap",
+						hint: `Average ${formatGap(current.averageGapMinutes)}`,
+					},
+				]}
+				className="w-full"
+			/>
+		</div>
+	);
+}
+
+function SubmissionLoad({
+	period,
+	stats,
+	onPeriodChange,
+}: {
+	period: SubmissionPeriod;
+	stats: SubmissionStatsResponse;
+	onPeriodChange: (period: SubmissionPeriod) => void;
+}) {
+	const [now, setNow] = useState(Date.now);
+	useEffect(() => {
+		const interval = window.setInterval(() => setNow(Date.now()), 60_000);
+		return () => window.clearInterval(interval);
+	}, []);
+	const sync = submissionSyncPresentation(stats.syncedAt, now);
+
+	return (
+		<div className="flex flex-col gap-4">
+			<div className="flex flex-wrap items-center justify-between gap-3">
+				<div className="flex flex-col gap-1">
+					<h2 className="font-heading text-xl">Submission load</h2>
+					<p className="text-muted-foreground text-sm">
+						Every received plugin submission and verification request, including attempts that were not
+						validated or published.
+					</p>
+				</div>
+				<div className="flex flex-wrap items-center justify-end gap-2">
+					<Badge variant={sync.stale ? "warning" : "success"} className="rounded-none font-mono uppercase">
+						{sync.label}
+					</Badge>
+					<Tabs value={period} onValueChange={(value) => onPeriodChange(value as SubmissionPeriod)}>
+						<TabsList>
+							<TabsTab value="hour">Hourly · 24h</TabsTab>
+							<TabsTab value="day">Daily · 30d</TabsTab>
+						</TabsList>
+					</Tabs>
+				</div>
+			</div>
+			<div className="flex flex-col gap-6">
+				<SubmissionKindCharts kind="plugin" label="Plugin submissions" period={period} stats={stats} />
+				<SubmissionKindCharts kind="verification" label="Verification requests" period={period} stats={stats} />
+			</div>
+		</div>
+	);
+}
+
 function HealthPage() {
-	const { range, page } = Route.useSearch();
+	const { range, page, submissionPeriod } = Route.useSearch();
 	const navigate = useNavigate({ from: "/health" });
 	const { data: breakdown } = useSuspenseQuery(breakdownQuery());
 	const { data: broken } = useSuspenseQuery(brokenPluginsQuery());
 	const { data: unverified } = useSuspenseQuery(unverifiedPluginsQuery(range));
+	const { data: submissions } = useSuspenseQuery(submissionStatsQuery());
 	const pageCount = Math.max(1, Math.ceil(unverified.plugins.length / UNVERIFIED_PAGE_SIZE));
 	const currentPage = Math.min(page, pageCount);
 	const pageStart = (currentPage - 1) * UNVERIFIED_PAGE_SIZE;
@@ -109,6 +233,11 @@ function HealthPage() {
 			<div className="flex flex-col gap-12">
 				<StatusChart title="INSTALL AVAILABILITY" rows={breakdown.installStatus} />
 				<StatusChart title="VERIFICATION STATUS" rows={breakdown.verification} />
+				<SubmissionLoad
+					period={submissionPeriod}
+					stats={submissions}
+					onPeriodChange={(period) => navigate({ search: (prev) => ({ ...prev, submissionPeriod: period }) })}
+				/>
 			</div>
 
 			<GraphRule />

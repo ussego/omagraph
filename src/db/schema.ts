@@ -94,6 +94,18 @@ export const meta = sqliteTable("meta", {
 	value: integer("value"),
 });
 
+// submission_events: every marketplace submission attempt, recorded once by
+// GitHub issue number regardless of its eventual validation or publication.
+export const submissionEvents = sqliteTable(
+	"submission_events",
+	{
+		issueNumber: integer("issue_number").primaryKey(),
+		kind: text("kind", { enum: ["plugin", "verification"] }).notNull(),
+		occurredAt: text("occurred_at").notNull(),
+	},
+	(t) => [index("submission_events_time_idx").on(t.occurredAt)],
+);
+
 // verification_events: derived by diffing verificationStatus vs prior snapshot
 export const verificationEvents = sqliteTable(
 	"verification_events",

@@ -75,10 +75,25 @@ export type PluginDetailResponse = {
 		influence: number | null;
 		related: RelatedPlugin[];
 	} | null;
-	placements: { competitionId: string; place: number; prize: number | null; title: string; announcedAt: string; announcementUrl: string }[];
+	placements: {
+		competitionId: string;
+		place: number;
+		prize: number | null;
+		title: string;
+		announcedAt: string;
+		announcementUrl: string;
+	}[];
 };
 
-export type CompetitionsResponse = { competitions: { id: string; title: string; announcedAt: string; announcementUrl: string; placements: { pluginId: string; name: string | null; place: number; prize: number | null }[] }[] };
+export type CompetitionsResponse = {
+	competitions: {
+		id: string;
+		title: string;
+		announcedAt: string;
+		announcementUrl: string;
+		placements: { pluginId: string; name: string | null; place: number; prize: number | null }[];
+	}[];
+};
 
 export type StatsPoint = { bucket: string; count: number };
 export type StatsResponse = {
@@ -188,6 +203,34 @@ export type HealthResponse = {
 	pluginCount: number;
 	// Running total from the meta table; null until the first heavy poll seeds it.
 	snapshotCount: number | null;
+};
+
+export type SubmissionKind = "plugin" | "verification";
+
+export type SubmissionWindowKind = {
+	total: number;
+	medianGapMinutes: number | null;
+	averageGapMinutes: number | null;
+};
+
+export type SubmissionWindow = {
+	points: { bucket: string; plugin: number; verification: number }[];
+	plugin: SubmissionWindowKind;
+	verification: SubmissionWindowKind;
+};
+
+export type SubmissionStatsResponse = {
+	hourly: SubmissionWindow;
+	daily: SubmissionWindow;
+	allTime: Record<
+		SubmissionKind,
+		{
+			total: number;
+			peakHour: { bucket: string; count: number } | null;
+			peakDay: { bucket: string; count: number } | null;
+		}
+	>;
+	syncedAt: string | null;
 };
 
 export type BrokenResponse = {

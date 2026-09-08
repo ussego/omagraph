@@ -33,6 +33,7 @@ import { Route as ApiAdminExplorerPollRouteImport } from './routes/api/admin/exp
 import { Route as ApiAdminLightPollRouteImport } from './routes/api/admin/light-poll'
 import { Route as ApiAdminPlacementsRouteImport } from './routes/api/admin/placements'
 import { Route as ApiAdminSnapshotRouteImport } from './routes/api/admin/snapshot'
+import { Route as ApiAdminSubmissionsRouteImport } from './routes/api/admin/submissions'
 import { Route as ApiAuthorsAuthorIdRouteImport } from './routes/api/authors/$authorId'
 import { Route as ApiAuthorsLeaderboardRouteImport } from './routes/api/authors/leaderboard'
 import { Route as ApiHealthBrokenRouteImport } from './routes/api/health/broken'
@@ -44,6 +45,7 @@ import { Route as ApiStatsBreakdownRouteImport } from './routes/api/stats/breakd
 import { Route as ApiStatsCategoriesRouteImport } from './routes/api/stats/categories'
 import { Route as ApiStatsHeatmapRouteImport } from './routes/api/stats/heatmap'
 import { Route as ApiStatsPublishedRouteImport } from './routes/api/stats/published'
+import { Route as ApiStatsSubmissionsRouteImport } from './routes/api/stats/submissions'
 import { Route as ApiStatsUpdatedRouteImport } from './routes/api/stats/updated'
 import { Route as ApiStatsVerifiedRouteImport } from './routes/api/stats/verified'
 import { Route as OgPluginsIdRouteImport } from './routes/og/plugins/$id'
@@ -174,6 +176,11 @@ const ApiAdminSnapshotRoute = ApiAdminSnapshotRouteImport.update({
   path: '/api/admin/snapshot',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAdminSubmissionsRoute = ApiAdminSubmissionsRouteImport.update({
+  id: '/api/admin/submissions',
+  path: '/api/admin/submissions',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthorsAuthorIdRoute = ApiAuthorsAuthorIdRouteImport.update({
   id: '/api/authors/$authorId',
   path: '/api/authors/$authorId',
@@ -227,6 +234,11 @@ const ApiStatsHeatmapRoute = ApiStatsHeatmapRouteImport.update({
 const ApiStatsPublishedRoute = ApiStatsPublishedRouteImport.update({
   id: '/api/stats/published',
   path: '/api/stats/published',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiStatsSubmissionsRoute = ApiStatsSubmissionsRouteImport.update({
+  id: '/api/stats/submissions',
+  path: '/api/stats/submissions',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiStatsUpdatedRoute = ApiStatsUpdatedRouteImport.update({
@@ -301,6 +313,7 @@ export interface FileRoutesByFullPath {
   '/api/admin/light-poll': typeof ApiAdminLightPollRoute
   '/api/admin/placements': typeof ApiAdminPlacementsRoute
   '/api/admin/snapshot': typeof ApiAdminSnapshotRoute
+  '/api/admin/submissions': typeof ApiAdminSubmissionsRoute
   '/api/authors/$authorId': typeof ApiAuthorsAuthorIdRoute
   '/api/authors/leaderboard': typeof ApiAuthorsLeaderboardRoute
   '/api/health/broken': typeof ApiHealthBrokenRoute
@@ -312,6 +325,7 @@ export interface FileRoutesByFullPath {
   '/api/stats/categories': typeof ApiStatsCategoriesRoute
   '/api/stats/heatmap': typeof ApiStatsHeatmapRoute
   '/api/stats/published': typeof ApiStatsPublishedRoute
+  '/api/stats/submissions': typeof ApiStatsSubmissionsRoute
   '/api/stats/updated': typeof ApiStatsUpdatedRoute
   '/api/stats/verified': typeof ApiStatsVerifiedRoute
   '/og/plugins/$id': typeof OgPluginsIdRoute
@@ -347,6 +361,7 @@ export interface FileRoutesByTo {
   '/api/admin/light-poll': typeof ApiAdminLightPollRoute
   '/api/admin/placements': typeof ApiAdminPlacementsRoute
   '/api/admin/snapshot': typeof ApiAdminSnapshotRoute
+  '/api/admin/submissions': typeof ApiAdminSubmissionsRoute
   '/api/authors/$authorId': typeof ApiAuthorsAuthorIdRoute
   '/api/authors/leaderboard': typeof ApiAuthorsLeaderboardRoute
   '/api/health/broken': typeof ApiHealthBrokenRoute
@@ -358,6 +373,7 @@ export interface FileRoutesByTo {
   '/api/stats/categories': typeof ApiStatsCategoriesRoute
   '/api/stats/heatmap': typeof ApiStatsHeatmapRoute
   '/api/stats/published': typeof ApiStatsPublishedRoute
+  '/api/stats/submissions': typeof ApiStatsSubmissionsRoute
   '/api/stats/updated': typeof ApiStatsUpdatedRoute
   '/api/stats/verified': typeof ApiStatsVerifiedRoute
   '/og/plugins/$id': typeof OgPluginsIdRoute
@@ -394,6 +410,7 @@ export interface FileRoutesById {
   '/api/admin/light-poll': typeof ApiAdminLightPollRoute
   '/api/admin/placements': typeof ApiAdminPlacementsRoute
   '/api/admin/snapshot': typeof ApiAdminSnapshotRoute
+  '/api/admin/submissions': typeof ApiAdminSubmissionsRoute
   '/api/authors/$authorId': typeof ApiAuthorsAuthorIdRoute
   '/api/authors/leaderboard': typeof ApiAuthorsLeaderboardRoute
   '/api/health/broken': typeof ApiHealthBrokenRoute
@@ -405,6 +422,7 @@ export interface FileRoutesById {
   '/api/stats/categories': typeof ApiStatsCategoriesRoute
   '/api/stats/heatmap': typeof ApiStatsHeatmapRoute
   '/api/stats/published': typeof ApiStatsPublishedRoute
+  '/api/stats/submissions': typeof ApiStatsSubmissionsRoute
   '/api/stats/updated': typeof ApiStatsUpdatedRoute
   '/api/stats/verified': typeof ApiStatsVerifiedRoute
   '/og/plugins/$id': typeof OgPluginsIdRoute
@@ -442,6 +460,7 @@ export interface FileRouteTypes {
     | '/api/admin/light-poll'
     | '/api/admin/placements'
     | '/api/admin/snapshot'
+    | '/api/admin/submissions'
     | '/api/authors/$authorId'
     | '/api/authors/leaderboard'
     | '/api/health/broken'
@@ -453,6 +472,7 @@ export interface FileRouteTypes {
     | '/api/stats/categories'
     | '/api/stats/heatmap'
     | '/api/stats/published'
+    | '/api/stats/submissions'
     | '/api/stats/updated'
     | '/api/stats/verified'
     | '/og/plugins/$id'
@@ -488,6 +508,7 @@ export interface FileRouteTypes {
     | '/api/admin/light-poll'
     | '/api/admin/placements'
     | '/api/admin/snapshot'
+    | '/api/admin/submissions'
     | '/api/authors/$authorId'
     | '/api/authors/leaderboard'
     | '/api/health/broken'
@@ -499,6 +520,7 @@ export interface FileRouteTypes {
     | '/api/stats/categories'
     | '/api/stats/heatmap'
     | '/api/stats/published'
+    | '/api/stats/submissions'
     | '/api/stats/updated'
     | '/api/stats/verified'
     | '/og/plugins/$id'
@@ -534,6 +556,7 @@ export interface FileRouteTypes {
     | '/api/admin/light-poll'
     | '/api/admin/placements'
     | '/api/admin/snapshot'
+    | '/api/admin/submissions'
     | '/api/authors/$authorId'
     | '/api/authors/leaderboard'
     | '/api/health/broken'
@@ -545,6 +568,7 @@ export interface FileRouteTypes {
     | '/api/stats/categories'
     | '/api/stats/heatmap'
     | '/api/stats/published'
+    | '/api/stats/submissions'
     | '/api/stats/updated'
     | '/api/stats/verified'
     | '/og/plugins/$id'
@@ -581,6 +605,7 @@ export interface RootRouteChildren {
   ApiAdminLightPollRoute: typeof ApiAdminLightPollRoute
   ApiAdminPlacementsRoute: typeof ApiAdminPlacementsRoute
   ApiAdminSnapshotRoute: typeof ApiAdminSnapshotRoute
+  ApiAdminSubmissionsRoute: typeof ApiAdminSubmissionsRoute
   ApiAuthorsAuthorIdRoute: typeof ApiAuthorsAuthorIdRoute
   ApiAuthorsLeaderboardRoute: typeof ApiAuthorsLeaderboardRoute
   ApiLeaderboardMetricRoute: typeof ApiLeaderboardMetricRoute
@@ -589,6 +614,7 @@ export interface RootRouteChildren {
   ApiStatsCategoriesRoute: typeof ApiStatsCategoriesRoute
   ApiStatsHeatmapRoute: typeof ApiStatsHeatmapRoute
   ApiStatsPublishedRoute: typeof ApiStatsPublishedRoute
+  ApiStatsSubmissionsRoute: typeof ApiStatsSubmissionsRoute
   ApiStatsUpdatedRoute: typeof ApiStatsUpdatedRoute
   ApiStatsVerifiedRoute: typeof ApiStatsVerifiedRoute
   OgPluginsIdRoute: typeof OgPluginsIdRoute
@@ -770,6 +796,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAdminSnapshotRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/admin/submissions': {
+      id: '/api/admin/submissions'
+      path: '/api/admin/submissions'
+      fullPath: '/api/admin/submissions'
+      preLoaderRoute: typeof ApiAdminSubmissionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/authors/$authorId': {
       id: '/api/authors/$authorId'
       path: '/api/authors/$authorId'
@@ -845,6 +878,13 @@ declare module '@tanstack/react-router' {
       path: '/api/stats/published'
       fullPath: '/api/stats/published'
       preLoaderRoute: typeof ApiStatsPublishedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/stats/submissions': {
+      id: '/api/stats/submissions'
+      path: '/api/stats/submissions'
+      fullPath: '/api/stats/submissions'
+      preLoaderRoute: typeof ApiStatsSubmissionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/stats/updated': {
@@ -964,6 +1004,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAdminLightPollRoute: ApiAdminLightPollRoute,
   ApiAdminPlacementsRoute: ApiAdminPlacementsRoute,
   ApiAdminSnapshotRoute: ApiAdminSnapshotRoute,
+  ApiAdminSubmissionsRoute: ApiAdminSubmissionsRoute,
   ApiAuthorsAuthorIdRoute: ApiAuthorsAuthorIdRoute,
   ApiAuthorsLeaderboardRoute: ApiAuthorsLeaderboardRoute,
   ApiLeaderboardMetricRoute: ApiLeaderboardMetricRoute,
@@ -972,6 +1013,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiStatsCategoriesRoute: ApiStatsCategoriesRoute,
   ApiStatsHeatmapRoute: ApiStatsHeatmapRoute,
   ApiStatsPublishedRoute: ApiStatsPublishedRoute,
+  ApiStatsSubmissionsRoute: ApiStatsSubmissionsRoute,
   ApiStatsUpdatedRoute: ApiStatsUpdatedRoute,
   ApiStatsVerifiedRoute: ApiStatsVerifiedRoute,
   OgPluginsIdRoute: OgPluginsIdRoute,

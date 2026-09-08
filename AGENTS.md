@@ -76,16 +76,24 @@ the environment truth for scripts, bindings, and deployment identity.
    the previous day's rows survive. The upstream regenerates the payload per
    request, so this poll must stay at one run per day. Built-in Plugins are
    out of scope and never get a `plugin_relations` row.
-4. **API**: Each endpoint is a file-based TanStack Start Server Route under
+4. **Submission Sync** (`.github/workflows/submissions.yml`): every five
+   minutes, GitHub Actions reads non-PR marketplace issues titled `[Plugin]:`
+   or `[Verify]:`, then posts their issue number, kind, and `created_at` to the
+   authenticated submissions endpoint. `submission_events.issue_number` makes
+   retries idempotent, while `meta.submission_sync_cursor` advances only after
+   successful ingestion. No cursor triggers the full historical backfill.
+5. **API**: Each endpoint is a file-based TanStack Start Server Route under
    `src/routes/api/`. Route handlers read Cloudflare bindings through
    `cloudflare:workers`, return the established JSON wire shapes, and use the
    shared `adminAuth` middleware for the admin endpoints.
-5. **Edge cache**: The global request middleware in `src/start.ts` caches
+6. **Edge cache**: The global request middleware in `src/start.ts` caches
    successful GET `/api/*` responses for one hour through the Cache API
    (per-prefix overrides in `CACHE_TTL`; `/api/leaderboard/trending` caches
    eight hours because its data only moves at the Heavy Poll) and adds
    `x-cache: HIT|MISS`. `/api/health*` responses remain uncached.
-6. **Frontend**: The same Worker serves the TanStack Start application shell.
+   `/api/stats/submissions` caches both display windows under one key for ten
+   minutes; successful ingestion purges it only when new events were inserted.
+7. **Frontend**: The same Worker serves the TanStack Start application shell.
    File-based routes live in `src/routes/`; generated `src/routeTree.gen.ts`
    is never hand-edited. Route loaders ensure the `queryOptions` factories in
    `src/lib/queries.ts` against the edge-cached API routes (SSR self-fetches

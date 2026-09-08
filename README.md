@@ -33,10 +33,12 @@ truth live in `wrangler.jsonc`.
 GitHub Actions polls the Worker's admin endpoints on a schedule: a heavy
 snapshot poll three times a day (validates feeds, upserts current state and
 history, diffs events), a cheap light poll every 30 minutes (new plugin IDs
-only), and an explorer poll once a day (similarity graph). `plugins` mirrors
-each plugin's current state, `plugin_snapshots` holds 90 days of history,
-and `plugin_relations` carries the explorer graph. The public read APIs and
-the dashboard serve from the mirror.
+only), a five-minute marketplace submission sync, and an explorer poll once
+a day (similarity graph). `plugins` mirrors each plugin's current state,
+`plugin_snapshots` holds 90 days of history, `submission_events` records every
+plugin submission and verification request once, and `plugin_relations`
+carries the explorer graph. The public read APIs and the dashboard serve from
+the mirrors.
 
 Architecture, query-budget discipline, and conventions are documented in
 [AGENTS.md](AGENTS.md); [CONTEXT.md](CONTEXT.md) is the domain model and
@@ -60,3 +62,12 @@ from [Omarchy](https://github.com/omacom/omarchy)'s built-in themes (MIT).
 Pushes to `main` run typecheck, lint, and tests, then deploy through
 `.github/workflows/deploy.yml`; `bun run deploy` deploys manually. The Worker
 is named `omagraph`.
+
+Submission analytics require a read-only `MARKETPLACE_GITHUB_TOKEN` GitHub
+Actions secret. Roll out in this order: provision that secret, apply the
+additive D1 migration, deploy, manually run `Submission sync` once for the
+historical backfill, verify `/health`, then confirm its five-minute schedule.
+The public `/api/stats/submissions` response contains both 24-hour and 30-day
+windows, caches for 10 minutes, and is purged only when ingestion inserts a new
+event. `/health` refreshes it every minute while visible, warns when the last
+successful sync is more than 15 minutes old, and refreshes stale data on focus.

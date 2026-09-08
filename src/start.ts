@@ -49,7 +49,10 @@ async function apiRun<T>(next: () => Promise<T>): Promise<Response | T> {
  * 8h TTL costs at most one poll cycle of staleness while cutting its
  * latest-per-plugin D1 reads ~8x.
  */
-const CACHE_TTL: [prefix: string, sMaxage: number][] = [["/api/leaderboard/trending", 28800]];
+const CACHE_TTL: [prefix: string, sMaxage: number][] = [
+	["/api/stats/submissions", 600],
+	["/api/leaderboard/trending", 28800],
+];
 
 const edgeCache = createMiddleware().server(async ({ next, request }) => {
 	const url = new URL(request.url);
@@ -57,9 +60,9 @@ const edgeCache = createMiddleware().server(async ({ next, request }) => {
 		return next();
 	}
 
-	// Nothing is cached for non-GET (admin) requests; only error bodies
-	// are normalized.
-	if (request.method !== "GET") {
+	// Admin responses are never cached, including authenticated GETs: serving
+	// one from the public cache would bypass route-level authentication.
+	if (request.method !== "GET" || url.pathname.startsWith("/api/admin/")) {
 		return apiRun(() => Promise.resolve(next()));
 	}
 
