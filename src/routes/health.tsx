@@ -132,6 +132,7 @@ function SubmissionKindCharts({
 			/>
 			<GraphStat
 				title={label.toUpperCase()}
+				layout="stack"
 				items={[
 					{
 						value: fmt(current.total),
