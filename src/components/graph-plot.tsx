@@ -39,8 +39,9 @@ function formatTick(value: number) {
 	return value.toFixed(1);
 }
 
-function GraphPlot({
-	title,
+type GraphPlotBodyProps = Omit<GraphPlotProps, "title" | "corner" | "className">;
+
+function GraphPlotBody({
 	data,
 	labels,
 	tooltipLabels,
@@ -50,9 +51,7 @@ function GraphPlot({
 	glyphs,
 	palette,
 	tone,
-	corner,
-	className,
-}: GraphPlotProps) {
+}: GraphPlotBodyProps) {
 	const reduce = useReducedMotion();
 	const [active, setActive] = React.useState<number | null>(null);
 	const max = Math.max(...data, 0);
@@ -124,8 +123,7 @@ function GraphPlot({
 	}
 
 	return (
-		<Graph title={title} tone={tone} className={className} corner={corner}>
-			<GraphBody className="flex flex-col gap-3">
+		<>
 				<div className="flex gap-3">
 					<div
 						className="flex w-[4ch] shrink-0 flex-col justify-between py-px text-right text-graph-muted tabular-nums"
@@ -234,10 +232,19 @@ function GraphPlot({
 				<span className="sr-only">
 					{variant} plot, {data.length} points, min {formatTick(min)}, max {formatTick(max)}
 				</span>
+		</>
+	);
+}
+
+function GraphPlot({ title, corner, className, ...body }: GraphPlotProps) {
+	return (
+		<Graph title={title} tone={body.tone} className={className} corner={corner}>
+			<GraphBody className="flex flex-col gap-3">
+				<GraphPlotBody {...body} />
 			</GraphBody>
 		</Graph>
 	);
 }
 
-export type { GraphPlotProps };
-export { GraphPlot };
+export type { GraphPlotBodyProps, GraphPlotProps };
+export { GraphPlot, GraphPlotBody };

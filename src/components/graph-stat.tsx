@@ -29,46 +29,52 @@ type GraphStatProps = {
 	className?: string;
 };
 
-function GraphStat({ title, items, tone, corner, className }: GraphStatProps) {
+function GraphStatBody({ items }: { items: StatItem[] }) {
 	const reduce = useReducedMotion();
 	const item = fadeUp(reduce);
 	const list = staggerList(reduce, 0.06);
 	const columns = Math.min(items.length, 4);
 
 	return (
+		<motion.ul
+			className={cn("grid gap-8", columnClass[columns])}
+			initial={reduce ? false : "hidden"}
+			role="list"
+			variants={list}
+			viewport={{ once: true, amount: 0.5 }}
+			whileInView="show"
+		>
+			{items.map((entry, index) => (
+				<motion.li className="flex flex-col gap-2" key={index} variants={item}>
+					<p
+						className={cn(
+							"text-3xl tracking-tight tabular-nums sm:text-4xl",
+							entry.tone
+								? graphToneClass(entry.tone)
+								: entry.accent
+									? "text-graph-accent"
+									: "text-foreground",
+						)}
+					>
+						{entry.value}
+					</p>
+					<p className="text-graph-muted">{entry.label}</p>
+					{entry.hint ? <p className="text-graph-muted">{entry.hint}</p> : null}
+				</motion.li>
+			))}
+		</motion.ul>
+	);
+}
+
+function GraphStat({ title, items, tone, corner, className }: GraphStatProps) {
+	return (
 		<Graph title={title} tone={tone} className={className} corner={corner}>
 			<GraphBody>
-				<motion.ul
-					className={cn("grid gap-8", columnClass[columns])}
-					initial={reduce ? false : "hidden"}
-					role="list"
-					variants={list}
-					viewport={{ once: true, amount: 0.5 }}
-					whileInView="show"
-				>
-					{items.map((entry, index) => (
-						<motion.li className="flex flex-col gap-2" key={index} variants={item}>
-							<p
-								className={cn(
-									"text-3xl tracking-tight tabular-nums sm:text-4xl",
-									entry.tone
-										? graphToneClass(entry.tone)
-										: entry.accent
-											? "text-graph-accent"
-											: "text-foreground",
-								)}
-							>
-								{entry.value}
-							</p>
-							<p className="text-graph-muted">{entry.label}</p>
-							{entry.hint ? <p className="text-graph-muted">{entry.hint}</p> : null}
-						</motion.li>
-					))}
-				</motion.ul>
+				<GraphStatBody items={items} />
 			</GraphBody>
 		</Graph>
 	);
 }
 
 export type { GraphStatProps, StatItem };
-export { GraphStat };
+export { GraphStat, GraphStatBody };
