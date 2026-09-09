@@ -174,10 +174,10 @@ function PluginDetailPage() {
 		<div className="flex flex-col gap-8">
 			{data.placements.length > 0 && (
 				<Graph title="Competition" tone={placeGraphTone(placement.place)} className="w-full">
-					<GraphBody className="grid gap-6 md:grid-cols-[14rem_minmax(0,1fr)] md:gap-8">
+					<GraphBody className="grid !p-0 md:grid-cols-[14rem_minmax(0,1fr)]">
 						<div
 							className={cn(
-								"graph-frame relative flex min-h-40 flex-col items-center justify-center overflow-hidden px-5 py-6",
+								"relative flex min-h-48 flex-col items-center justify-center overflow-hidden px-5 py-7 sm:px-8 sm:py-8 md:min-h-full",
 								placeCardTone(placement.place),
 								placeTone(placement.place),
 							)}
@@ -200,7 +200,7 @@ function PluginDetailPage() {
 							</span>
 						</div>
 
-						<div className="flex min-w-0 flex-col justify-between gap-6">
+						<div className="flex min-w-0 flex-col justify-between gap-6 px-5 py-7 sm:px-8 sm:py-8">
 							<div className="flex flex-col gap-2">
 								<p
 									className={cn(
