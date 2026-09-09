@@ -84,6 +84,42 @@ function winnerSnippet(pluginId: string) {
 	return `[![winner](${badge})](https://stats.ussego.com/plugins/${pluginId})`;
 }
 
+function ordinal(place: number): string {
+	const mod100 = place % 100;
+	if (mod100 >= 11 && mod100 <= 13) return `${place}th`;
+	switch (place % 10) {
+		case 1:
+			return `${place}st`;
+		case 2:
+			return `${place}nd`;
+		case 3:
+			return `${place}rd`;
+		default:
+			return `${place}th`;
+	}
+}
+
+function placeTone(place: number) {
+	if (place === 1) return "text-graph-accent";
+	if (place === 2) return "text-graph-accent-2";
+	if (place === 0) return "text-graph-muted";
+	return "text-graph-accent-3";
+}
+
+function placeCardTone(place: number) {
+	if (place === 1) return "bg-graph-accent/10";
+	if (place === 2) return "bg-graph-accent-2/10";
+	if (place === 0) return "bg-muted/40";
+	return "bg-graph-accent-3/10";
+}
+
+function placeGraphTone(place: number) {
+	if (place === 1) return "accent";
+	if (place === 2) return "secondary";
+	if (place === 0) return undefined;
+	return "category";
+}
+
 function PluginDetailPage() {
 	const { pluginId } = Route.useParams();
 	const { data } = useSuspenseQuery(pluginDetailQuery(pluginId));
@@ -132,40 +168,90 @@ function PluginDetailPage() {
 			})),
 		[snapshots],
 	);
+	const placement = data.placements[0];
 
 	return (
 		<div className="flex flex-col gap-8">
 			{data.placements.length > 0 && (
-				<Graph title="Competition" className="w-full">
-					<GraphBody className="flex flex-wrap items-center justify-between gap-4">
-						<div>
-							<p className="text-2xl">
-								🏆{" "}
-								{data.placements[0].place === 0
-									? "Honorable mention"
-									: `${data.placements[0].place}${data.placements[0].place === 1 ? "st" : data.placements[0].place === 2 ? "nd" : "th"}`}{" "}
-								place
-							</p>
-							<p className="text-graph-muted">
-								{data.placements[0].title}
-								{data.placements[0].prize ? ` · $${data.placements[0].prize}` : ""}
-							</p>
+				<Graph title="Competition" tone={placeGraphTone(placement.place)} className="w-full">
+					<GraphBody className="grid gap-6 md:grid-cols-[14rem_minmax(0,1fr)] md:gap-8">
+						<div
+							className={cn(
+								"graph-frame relative flex min-h-40 flex-col items-center justify-center overflow-hidden px-5 py-6",
+								placeCardTone(placement.place),
+								placeTone(placement.place),
+							)}
+						>
+							<span
+								aria-hidden="true"
+								className="absolute -right-2 -bottom-7 font-mono text-8xl leading-none opacity-10 select-none"
+							>
+								{placement.place === 0 ? "HM" : String(placement.place).padStart(2, "0")}
+							</span>
+							<strong className="relative font-mono text-6xl tracking-tighter tabular-nums">
+								{placement.place === 0 ? "HM" : `#${placement.place}`}
+							</strong>
+							<span className="relative mt-2 font-mono text-xs tracking-[0.2em] uppercase">
+								{placement.place === 0
+									? "recognized"
+									: placement.place === 1
+										? "overall winner"
+										: `${ordinal(placement.place)} place`}
+							</span>
 						</div>
-						<div className="flex gap-3 font-mono text-xs uppercase">
-							<a
-								href={data.placements[0].announcementUrl}
-								target="_blank"
-								rel="noreferrer"
-								className="text-graph-accent hover:underline"
-							>
-								announcement ↗
-							</a>
-							<Link
-								to="/competitions"
-								className="text-muted-foreground hover:text-foreground hover:underline"
-							>
-								hall of fame
-							</Link>
+
+						<div className="flex min-w-0 flex-col justify-between gap-6">
+							<div className="flex flex-col gap-2">
+								<p
+									className={cn(
+										"font-mono text-xs tracking-wide uppercase",
+										placeTone(placement.place),
+									)}
+								>
+									Awarded {fmtDate(placement.announcedAt)}
+								</p>
+								<h2 className="text-balance font-heading text-2xl sm:text-3xl">{placement.title}</h2>
+								<p className="text-muted-foreground">
+									{placement.place === 0
+										? "Selected for an honorable mention."
+										: `Placed ${ordinal(placement.place)} in the competition.`}
+								</p>
+							</div>
+
+							<div className="flex flex-wrap items-end justify-between gap-5">
+								<dl className="flex gap-8">
+									<div className="flex flex-col gap-1">
+										<dt className="font-mono text-xs text-graph-muted uppercase">placement</dt>
+										<dd className="text-lg tabular-nums">
+											{placement.place === 0 ? "Honorable mention" : ordinal(placement.place)}
+										</dd>
+									</div>
+									{placement.prize != null && (
+										<div className="flex flex-col gap-1">
+											<dt className="font-mono text-xs text-graph-muted uppercase">prize</dt>
+											<dd className={cn("text-lg tabular-nums", placeTone(placement.place))}>
+												${fmt(placement.prize)}
+											</dd>
+										</div>
+									)}
+								</dl>
+								<div className="flex flex-wrap gap-3 font-mono text-xs uppercase">
+									<a
+										href={placement.announcementUrl}
+										target="_blank"
+										rel="noreferrer"
+										className={cn("hover:underline", placeTone(placement.place))}
+									>
+										announcement ↗
+									</a>
+									<Link
+										to="/competitions"
+										className="text-muted-foreground hover:text-foreground hover:underline"
+									>
+										hall of fame
+									</Link>
+								</div>
+							</div>
 						</div>
 					</GraphBody>
 				</Graph>
@@ -174,7 +260,10 @@ function PluginDetailPage() {
 				<Graph title="Details" className="min-w-0 flex-1">
 					<GraphBody className="flex flex-col gap-5">
 						<div className="flex flex-col gap-2">
-							<h1 className="text-balance font-heading text-2xl">{plugin.name ?? plugin.id}</h1>
+							<div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+								<h1 className="text-balance font-heading text-2xl">{plugin.name ?? plugin.id}</h1>
+								<p className="break-all font-mono text-xs tracking-wide text-graph-muted">{plugin.id}</p>
+							</div>
 							<p
 								ref={descRef}
 								className={cn(
@@ -214,16 +303,8 @@ function PluginDetailPage() {
 								</dd>
 							</div>
 							<div className="flex min-w-0 flex-col gap-1">
-								<dt className="text-xs tracking-wide text-graph-muted uppercase">plugin id</dt>
-								<dd className="break-all">{plugin.id}</dd>
-							</div>
-							<div className="flex min-w-0 flex-col gap-1">
 								<dt className="text-xs tracking-wide text-graph-muted uppercase">category</dt>
 								<dd>{plugin.category ?? "—"}</dd>
-							</div>
-							<div className="flex min-w-0 flex-col gap-1">
-								<dt className="text-xs tracking-wide text-graph-muted uppercase">license</dt>
-								<dd>{plugin.license ?? "—"}</dd>
 							</div>
 							<div className="flex min-w-0 flex-col gap-1">
 								<dt className="text-xs tracking-wide text-graph-muted uppercase">added</dt>
