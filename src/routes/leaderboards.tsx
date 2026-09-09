@@ -142,7 +142,7 @@ function MetricLeaderboard({ metric }: { metric: (typeof METRIC_TABS)[number] })
 									<span className="font-mono text-sm text-graph-muted tabular-nums">{fmt(metric.score(r))}</span>
 								</div>
 								<div className="flex min-w-0 flex-col gap-1">
-									<span className="truncate text-base font-medium">{name}</span>
+									<span className="line-clamp-2 text-base font-medium break-words">{name}</span>
 									{r.author ? <span className="truncate text-xs text-graph-muted">{r.author}</span> : null}
 								</div>
 							</Link>

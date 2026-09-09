@@ -93,7 +93,7 @@ function CompetitionPlacements({ placements }: { placements: Placement[] }) {
 									) : null}
 								</div>
 								<div className="flex min-w-0 flex-col gap-1">
-									<span className="truncate text-base font-medium">{placementName(placement)}</span>
+									<span className="line-clamp-2 text-base font-medium break-words">{placementName(placement)}</span>
 									<span className={cn("font-mono text-xs uppercase", placeTone(placement.place))}>{placeName}</span>
 								</div>
 							</Link>
