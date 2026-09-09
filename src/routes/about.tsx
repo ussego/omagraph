@@ -101,8 +101,8 @@ function AboutPage() {
 					<div className="flex flex-col gap-1">
 						<dt className="font-mono text-xs tracking-wide text-graph-accent uppercase">Exploration</dt>
 						<dd className="text-pretty text-muted-foreground">
-							Health views summarize verification and install status; the marketplace explorer graph
-							connects related community plugins.
+							Health views summarize verification and install status plus received submission load; the
+							marketplace explorer graph connects related community plugins.
 						</dd>
 					</div>
 					<div className="flex flex-col gap-1">
@@ -132,6 +132,17 @@ function AboutPage() {
 								Omarchy Plugin Catalog
 							</a>
 							, whose source is MIT licensed.
+						</dd>
+					</div>
+					<div aria-hidden="true" className="graph-rule" />
+					<div className="flex flex-col gap-1.5 py-4 first:pt-0 last:pb-0 sm:flex-row sm:gap-8">
+						<dt className="shrink-0 font-mono text-xs tracking-wide text-graph-muted uppercase sm:w-36 sm:pt-0.5">
+							Marketplace issues
+						</dt>
+						<dd className="text-pretty text-sm text-muted-foreground">
+							You submit plugins and verification requests as marketplace issues. A Trigger.dev poll
+							imports new [Plugin]: and [Verify]: issues every five minutes; Omagraph counts each received
+							attempt, not its outcome.
 						</dd>
 					</div>
 					<div aria-hidden="true" className="graph-rule" />
@@ -189,6 +200,7 @@ function AboutPage() {
 			<GraphStat
 				title="Cadence"
 				items={[
+					{ value: "5 min", label: "submission sync" },
 					{ value: "30 min", label: "new plugin check" },
 					{ value: "8 h", label: "full snapshots" },
 					{ value: "daily", label: "explorer relations" },
