@@ -8,6 +8,8 @@ import { buttonVariants } from "@/components/ui/button";
 import { pageHead } from "@/lib/site";
 
 export const Route = createFileRoute("/about")({
+	// This page's SSR fits the Workers Free CPU budget; keep it for SEO.
+	ssr: true,
 	head: () =>
 		pageHead(
 			"About Omagraph · Omarchy Plugin Analytics",

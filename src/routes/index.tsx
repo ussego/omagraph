@@ -51,6 +51,8 @@ const indexSearchSchema = z.object({
 });
 
 export const Route = createFileRoute("/")({
+	// This page's SSR fits the Workers Free CPU budget; keep it for SEO.
+	ssr: true,
 	head: () => ({
 		...pageHead(SITE_TITLE, SITE_DESC, "/"),
 		scripts: [

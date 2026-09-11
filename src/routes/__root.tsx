@@ -19,6 +19,11 @@ const THEME_CSS_HREF = JSON.stringify(themesCss);
 const THEME_INIT_SCRIPT = `(function(){try{var stored=window.localStorage.getItem('theme');var mode=(stored==='light'||stored==='dark'||stored==='auto')?stored:'auto';var prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;var resolved=mode==='auto'?(prefersDark?'dark':'light'):mode;var root=document.documentElement;root.classList.remove('light','dark');root.classList.add(resolved);if(mode==='auto'){root.removeAttribute('data-theme')}else{root.setAttribute('data-theme',mode)}root.style.colorScheme=resolved;var palette=window.localStorage.getItem('color-theme');if(palette&&palette!=='omagraph'&&palette!=='omachi'){root.setAttribute('data-color-theme',palette);var link=document.createElement('link');link.rel='stylesheet';link.href=${THEME_CSS_HREF};document.head.appendChild(link)}else{root.removeAttribute('data-color-theme')}}catch(e){}})();`;
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
+	// Workers Free allows 10ms CPU per invocation; SSR of data-heavy pages
+	// exceeds it and answers 503 ("Worker exceeded CPU time limit"). Pages
+	// render client-side against the edge-cached API; `/` and `/about` opt
+	// back into SSR with `ssr: true` because their SSR fits the budget.
+	ssr: false,
 	head: () => ({
 		meta: [
 			{ charSet: "utf-8" },

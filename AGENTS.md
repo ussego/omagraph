@@ -104,6 +104,10 @@ the environment truth for scripts, bindings, and deployment identity.
    Worker for a plain `fetch()` to its own custom domain; the URL is derived
    from the request, so per-view D1 reads still hit the edge cache first);
    components read the cache with `useSuspenseQuery`.
+   SSR is off by default (`ssr: false` on the root route in `src/routes/__root.tsx`,
+   inherited by every page): data-heavy pages exceed the 10ms Workers Free CPU
+   budget and 503. Only `/` and `/about` opt back in with `ssr: true`; every
+   other page renders client-side against the edge-cached API.
    Query-affecting view state lives in zod-validated search params keyed by
    `loaderDeps`. The command palette's keystroke-driven queries stay on plain
    `useQuery`. UI primitives are owned shadcn source files in
