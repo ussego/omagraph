@@ -30,7 +30,7 @@ truth live in `wrangler.jsonc`.
 
 ## How it works
 
-GitHub Actions polls the Worker's admin endpoints on a schedule: a heavy
+Trigger.dev polls the Worker's admin endpoints on a schedule: a heavy
 snapshot poll three times a day (validates feeds, upserts current state and
 history, diffs events), a cheap light poll every 30 minutes (new plugin IDs
 only), a five-minute marketplace submission sync, and an explorer poll once
@@ -69,6 +69,7 @@ environment variables in Trigger.dev production. Each run reads the stored
 cursor before querying GitHub, and a missing cursor is initialized without a
 historical backfill. `.github/workflows/submissions.yml` remains available via
 `workflow_dispatch` as a manual fallback.
+The heavy, light, and explorer polls run on Trigger.dev the same way, with their workflows kept as manual fallbacks.
 The public `/api/stats/submissions` response contains both 24-hour and 30-day
 windows, caches for 10 minutes, and is purged only when ingestion inserts a new
 event. `/health` refreshes it every minute while visible, warns when the last

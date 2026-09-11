@@ -15,7 +15,7 @@ _Avoid_: catalog.json (that's the transport file, not the concept)
 A point-in-time capture of one Plugin's engagement counters (views, copies, hearts) and verification/version state, recorded by a Heavy Poll.
 
 **Heavy Poll**:
-The full catalog refresh: upserts every Plugin's metadata, records a new Snapshot per Plugin, and diffs against each Plugin's prior Snapshot to produce Verification Events and Update Events. Runs on a schedule via GitHub Actions calling an admin endpoint.
+The full catalog refresh: upserts every Plugin's metadata, records a new Snapshot per Plugin, and diffs against each Plugin's prior Snapshot to produce Verification Events and Update Events. Runs on a Trigger.dev cron schedule that POSTs an admin endpoint.
 _Avoid_: snapshot poll, cron job
 
 **Light Poll**:
