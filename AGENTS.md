@@ -54,21 +54,21 @@ the environment truth for scripts, bindings, and deployment identity.
 
 ## Architecture (data flow)
 
-1. **Heavy Poll** (`runSnapshot()`, `src/lib/snapshot.ts`): GitHub Actions
-   calls `POST /api/admin/snapshot`. The poll fetches and validates the catalog
+1. **Heavy Poll** (`runSnapshot()`, `src/lib/snapshot.ts`): Trigger.dev runs
+   it on cron (`heavyPoll`, `src/trigger/polls.ts`), POSTing `/api/admin/snapshot`. The poll fetches and validates the catalog
    and stats feeds, reads each Plugin's previous verification/version state
    from `plugins.current_*` (before the upsert overwrites it), upserts Plugin
    metadata and `current_*` state, appends one `plugin_snapshots` row per
    Plugin, diffs the captured state into Verification Events and Update
    Events, maintains the `meta.snapshot_count` running total, and prunes
    Snapshots older than 90 days.
-2. **Light Poll** (`pollNewPlugins()`, `src/lib/light-poll.ts`): GitHub Actions
-   calls `POST /api/admin/light-poll`. It fetches the catalog and inserts rows
+2. **Light Poll** (`pollNewPlugins()`, `src/lib/light-poll.ts`): Trigger.dev
+   runs it on cron (`lightPoll`, `src/trigger/polls.ts`), POSTing `/api/admin/light-poll`. It fetches the catalog and inserts rows
    only for new Plugin IDs, keeping the live count fresh between Heavy Polls.
    It does not validate the full feed, write Snapshots, or perform per-Plugin
    diffing; that restraint keeps it cheap.
-3. **Explorer Poll** (`pollExplorerRelations()`, `src/lib/explorer.ts`): GitHub
-   Actions calls `POST /api/admin/explorer-poll` once a day (05:23 UTC). It
+3. **Explorer Poll** (`pollExplorerRelations()`, `src/lib/explorer.ts`): Trigger.dev
+   runs it on cron (`explorerPoll`, `src/trigger/polls.ts`), POSTing `/api/admin/explorer-poll` once a day (05:23 UTC). It
    fetches explorer-data.json (the Omarchy explorer's similarity graph over
    the community catalog) and upserts `plugin_relations`: per-Plugin nearest
    neighbors with similarity scores, the cluster label, and graph influence.

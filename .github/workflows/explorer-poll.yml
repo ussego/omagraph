@@ -1,8 +1,10 @@
 name: Explorer poll (plugin relations)
 
 on:
-  schedule:
-    - cron: "23 5 * * *"
+  # Trigger.dev owns the production schedule (see src/trigger/polls.ts). Keep
+  # this commented so workflow_dispatch remains a manually runnable fallback.
+  # schedule:
+  #   - cron: "23 5 * * *"
   workflow_dispatch:
 
 concurrency:
