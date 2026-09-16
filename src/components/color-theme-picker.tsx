@@ -117,7 +117,14 @@ export function ColorThemePicker() {
 		const initialMode = getInitialMode();
 		setMode(initialMode);
 		applyThemeMode(initialMode);
-		setPalette(getStoredPaletteId());
+		const storedPalette = getStoredPaletteId();
+		setPalette(storedPalette);
+		// SSR renders <html> without the palette attribute, so hydration can
+		// drop what the pre-paint bootstrap set. Re-assert it here and ensure
+		// the stylesheet is present (attribute flips after load, no half-apply).
+		if (storedPalette !== OMAGRAPH_ID) {
+			void loadThemesCss().then(() => applyPalette(storedPalette));
+		}
 	}, []);
 
 	useEffect(() => {
